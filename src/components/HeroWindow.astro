@@ -116,7 +116,8 @@
     max-width: 520px;
     margin-inline: auto;
     aspect-ratio: 460 / 580;
-    perspective: 1600px;
+    perspective: 1400px;
+    perspective-origin: 30% 50%;
     transform-style: preserve-3d;
   }
 
@@ -138,10 +139,13 @@
   .hero-window__stage {
     width: 100%;
     height: 100%;
+    /* Base inward tilt — window sits on an angle so it feels 3D at rest.
+       Mouse parallax adds to this via the --mx / --my custom properties. */
     transform:
-      rotateX(var(--mx, 0deg))
-      rotateY(var(--my, 0deg));
+      rotateX(calc(3deg + var(--mx, 0deg)))
+      rotateY(calc(-14deg + var(--my, 0deg)));
     transition: transform 0.25s var(--ease-out-expo);
+    transform-style: preserve-3d;
     will-change: transform;
   }
 
@@ -215,10 +219,9 @@
     100% { opacity: 0; transform: translateX(130%) skewX(-12deg); }
   }
 
-  /* Reduced motion — kill everything but keep the window visible */
+  /* Reduced motion — kill everything but keep the window visible and on-angle */
   @media (prefers-reduced-motion: reduce) {
     .hero-window__svg,
-    .hero-window__stage,
     .pane,
     .sheen,
     .pane-hinge,
@@ -227,6 +230,12 @@
       transition: none !important;
       transform: none !important;
       opacity: 1 !important;
+    }
+    .hero-window__stage {
+      animation: none !important;
+      transition: none !important;
+      /* Preserve the base tilt — it's static, not motion */
+      transform: rotateX(3deg) rotateY(-14deg) !important;
     }
   }
 </style>
