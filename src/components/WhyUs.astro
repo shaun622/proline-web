@@ -1,0 +1,121 @@
+---
+const points = [
+  {
+    label: 'Over 13 years',
+    title: 'Hands-on experience',
+    description:
+      'More than a decade specialising in aluminium joinery repairs across Canterbury. Specialist, not generalist.',
+    icon: 'clock',
+  },
+  {
+    label: 'Residential & commercial',
+    title: 'One team, both jobs',
+    description:
+      'From a sticky bedroom window to full shopfront maintenance rounds. Same standard, same turnaround.',
+    icon: 'buildings',
+  },
+  {
+    label: 'Free quotes',
+    title: 'Fixed prices, no surprises',
+    description:
+      'On-site assessment at no cost, with a clear quote up front. You approve before we start.',
+    icon: 'quote',
+  },
+  {
+    label: 'Local specialist',
+    title: 'Christchurch-based',
+    description:
+      'Quick response across the city and wider Canterbury. Direct line to the owner, every time.',
+    icon: 'pin',
+  },
+];
+---
+
+<section id="why" class="relative scroll-mt-24 border-t border-ink-900 bg-ink-900">
+  <!-- Subtle highlight gradient from top -->
+  <div aria-hidden="true" class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_50%_0%,rgba(200,204,211,0.05),transparent_70%)]"></div>
+
+  <div class="relative mx-auto max-w-7xl px-5 py-24 sm:px-8 sm:py-32">
+    <div class="grid gap-16 lg:grid-cols-12">
+      <!-- Left: intro -->
+      <div class="lg:col-span-5">
+        <div class="reveal"><span class="eyebrow">Why ProLine</span></div>
+        <h2 class="reveal mt-5 font-display text-4xl font-semibold leading-tight tracking-tight text-ink-50 sm:text-5xl" style="transition-delay:80ms">
+          A craftsman's eye, a<br />
+          <span class="text-chrome">tradesman's hands.</span>
+        </h2>
+        <p class="reveal mt-5 text-base leading-relaxed text-ink-300 sm:text-lg" style="transition-delay:160ms">
+          ProLine is Michael — an aluminium specialist who knows what fails on old joinery,
+          why it fails, and the most economical way to make it right. Every quote and every job
+          comes from the same pair of hands.
+        </p>
+
+        <dl class="reveal mt-10 grid grid-cols-2 gap-x-8 gap-y-6 border-t border-ink-800 pt-8 text-sm" style="transition-delay:240ms">
+          <div>
+            <dt class="text-xs font-medium uppercase tracking-wider text-ink-400">Based in</dt>
+            <dd class="mt-1 font-display text-base font-semibold text-ink-50">Christchurch</dd>
+          </div>
+          <div>
+            <dt class="text-xs font-medium uppercase tracking-wider text-ink-400">Service area</dt>
+            <dd class="mt-1 font-display text-base font-semibold text-ink-50">All of Canterbury</dd>
+          </div>
+          <div>
+            <dt class="text-xs font-medium uppercase tracking-wider text-ink-400">Response time</dt>
+            <dd class="mt-1 font-display text-base font-semibold text-ink-50">Usually within 48h</dd>
+          </div>
+          <div>
+            <dt class="text-xs font-medium uppercase tracking-wider text-ink-400">Quotes</dt>
+            <dd class="mt-1 font-display text-base font-semibold text-ink-50">Free &amp; on-site</dd>
+          </div>
+        </dl>
+      </div>
+
+      <!-- Right: value prop cards -->
+      <ul class="lg:col-span-7 grid gap-3 sm:grid-cols-2">
+        {points.map((p, idx) => (
+          <li class="card reveal" style={`transition-delay:${idx * 70}ms`}>
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-b from-white/[0.06] to-white/[0.015] ring-1 ring-inset ring-ink-700">
+              <svg class="h-4.5 w-4.5 text-chrome-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                {p.icon === 'clock' && (
+                  <>
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M12 7v5l3 2" />
+                  </>
+                )}
+                {p.icon === 'buildings' && (
+                  <>
+                    <rect x="3" y="7" width="8" height="14" />
+                    <rect x="11" y="3" width="10" height="18" />
+                    <path d="M14 8h2M14 12h2M14 16h2M6 11h2M6 15h2" />
+                  </>
+                )}
+                {p.icon === 'quote' && (
+                  <>
+                    <path d="M6 3h9l5 5v13H6z" />
+                    <path d="M15 3v5h5" />
+                    <path d="M10 13h6M10 17h4" />
+                  </>
+                )}
+                {p.icon === 'pin' && (
+                  <>
+                    <path d="M12 21s-7-7.5-7-13a7 7 0 1114 0c0 5.5-7 13-7 13z" />
+                    <circle cx="12" cy="8" r="2.5" />
+                  </>
+                )}
+              </svg>
+            </div>
+            <div class="mt-4 text-[11px] font-semibold uppercase tracking-[0.15em] text-chrome-400">
+              {p.label}
+            </div>
+            <h3 class="mt-1.5 font-display text-lg font-semibold tracking-tight text-ink-50">
+              {p.title}
+            </h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink-300">
+              {p.description}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>

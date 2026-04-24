@@ -1,0 +1,50 @@
+---
+import { Image } from 'astro:assets';
+import photo1 from '../assets/work/20251219_105847.jpg';
+import photo2 from '../assets/work/20260202_103444.jpg';
+import photo3 from '../assets/work/20260202_115942.jpg';
+import photo4 from '../assets/work/20260209_140242.jpg';
+import photo5 from '../assets/work/20260416_145056.jpg';
+
+const photos = [
+  { src: photo5, alt: 'ProLine Aluminium service vehicle in Canterbury with mountain backdrop', span: 'lg:col-span-2 lg:row-span-2' },
+  { src: photo1, alt: 'Aluminium joinery repair work', span: '' },
+  { src: photo2, alt: 'Window hardware replacement' , span: '' },
+  { src: photo3, alt: 'Residential aluminium job in Christchurch', span: '' },
+  { src: photo4, alt: 'Commercial aluminium joinery maintenance', span: '' },
+];
+---
+
+<section id="work" class="relative scroll-mt-24 bg-ink-950">
+  <div class="mx-auto max-w-7xl px-5 py-24 sm:px-8 sm:py-32">
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <div class="max-w-2xl">
+        <div class="reveal"><span class="eyebrow">Our work</span></div>
+        <h2 class="reveal mt-5 font-display text-4xl font-semibold leading-tight tracking-tight text-ink-50 sm:text-5xl" style="transition-delay:80ms">
+          Recent jobs across <span class="text-chrome">Canterbury</span>.
+        </h2>
+      </div>
+      <p class="reveal max-w-md text-sm leading-relaxed text-ink-400 sm:text-base" style="transition-delay:160ms">
+        A small selection of repairs, glass replacements and retrofit glazing work — residential and commercial.
+      </p>
+    </div>
+
+    <!-- Responsive asymmetric grid -->
+    <div class="reveal mt-14 grid auto-rows-[minmax(200px,1fr)] grid-cols-1 gap-3 sm:grid-cols-2 sm:auto-rows-[minmax(240px,1fr)] lg:grid-cols-4 lg:auto-rows-[minmax(220px,1fr)]" style="transition-delay:240ms">
+      {photos.map((p, idx) => (
+        <figure class={`group relative overflow-hidden rounded-xl ring-1 ring-ink-800 ${p.span}`}>
+          <Image
+            src={p.src}
+            alt={p.alt}
+            widths={[400, 720, 1200]}
+            sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+            class="h-full w-full object-cover transition-transform duration-[1200ms] ease-[var(--ease-out-expo)] group-hover:scale-[1.04]"
+            loading={idx < 2 ? 'eager' : 'lazy'}
+          />
+          <!-- Vignette on hover -->
+          <div aria-hidden="true" class="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink-950/70 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
+        </figure>
+      ))}
+    </div>
+  </div>
+</section>

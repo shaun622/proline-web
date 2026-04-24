@@ -1,0 +1,95 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  ogImage?: string;
+}
+
+const {
+  title = 'ProLine Aluminium — Aluminium Joinery Repairs & Alterations | Christchurch',
+  description = 'Christchurch aluminium joinery specialists. Window and door repairs, broken glass replacement, hardware replacement, retrofit glazing. Residential and commercial. Free quotes.',
+  canonical,
+  ogImage = '/og-image.png',
+} = Astro.props;
+
+const site = Astro.site ?? new URL('https://prolinechch.co.nz');
+const canonicalURL = canonical ?? new URL(Astro.url.pathname, site).toString();
+const ogImageURL = new URL(ogImage, site).toString();
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: 'ProLine Aluminium',
+  description,
+  telephone: '+64278456163',
+  email: 'michael@prolinealuminium.co.nz',
+  url: site.toString(),
+  image: ogImageURL,
+  areaServed: [
+    { '@type': 'City', name: 'Christchurch' },
+    { '@type': 'AdministrativeArea', name: 'Canterbury' },
+  ],
+  address: {
+    '@type': 'PostalAddress',
+    addressRegion: 'Canterbury',
+    addressCountry: 'NZ',
+  },
+  priceRange: '$$',
+};
+---
+
+<!doctype html>
+<html lang="en-NZ">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#0a0b0d" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:locale" content="en_NZ" />
+    <meta property="og:site_name" content="ProLine Aluminium" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body class="antialiased">
+    <slot />
+
+    <script>
+      // Scroll-reveal observer
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('in');
+              io.unobserve(entry.target);
+            }
+          }
+        },
+        { threshold: 0.12, rootMargin: '0px 0px -5% 0px' }
+      );
+      document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+    </script>
+  </body>
+</html>
