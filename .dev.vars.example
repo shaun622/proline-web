@@ -1,0 +1,8 @@
+# Copy this file to `.dev.vars` and fill in real values.
+# `.dev.vars` is used by `wrangler pages dev` for local Pages Function testing
+# and is gitignored. In production, set these in Cloudflare Pages → Settings →
+# Environment variables instead.
+
+RESEND_API_KEY=your_resend_api_key_here
+# CONTACT_FROM_EMAIL="ProLine <website@prolinechch.co.nz>"
+# CONTACT_TO_EMAIL=michael@prolinealuminium.co.nz
