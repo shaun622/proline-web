@@ -1,0 +1,294 @@
+---
+// Animated metallic aluminium window — hero right-column centrepiece.
+// - SVG is fully static; all motion lives in CSS + a tiny JS controller.
+// - Idle float, draw-in, sheen sweep, and a top-right pane that hinges open as
+//   the hero scrolls past.
+// - Mouse parallax adds a subtle 3D tilt, disabled if prefers-reduced-motion.
+---
+
+<div class="hero-window" id="hero-window" aria-hidden="true">
+  <div class="hero-window__glow"></div>
+
+  <div class="hero-window__stage">
+    <svg
+      class="hero-window__svg"
+      viewBox="0 0 460 580"
+      xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="xMidYMid meet"
+    >
+      <defs>
+        <!-- Frame: brushed chrome, vertical -->
+        <linearGradient id="chrome-v" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#eceef1" />
+          <stop offset="28%" stop-color="#c8ccd3" />
+          <stop offset="55%" stop-color="#858a93" />
+          <stop offset="100%" stop-color="#3a3e47" />
+        </linearGradient>
+
+        <!-- Frame: brushed chrome, horizontal highlight -->
+        <linearGradient id="chrome-h" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#5a5f68" />
+          <stop offset="35%" stop-color="#c8ccd3" />
+          <stop offset="65%" stop-color="#eceef1" />
+          <stop offset="100%" stop-color="#5a5f68" />
+        </linearGradient>
+
+        <!-- Mullion / divider (thinner chrome) -->
+        <linearGradient id="chrome-mullion" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#3a3e47" />
+          <stop offset="50%" stop-color="#a9aeb6" />
+          <stop offset="100%" stop-color="#3a3e47" />
+        </linearGradient>
+
+        <!-- Glass: deep blue-grey with soft vertical grade -->
+        <linearGradient id="glass" x1="0.2" y1="0" x2="0.8" y2="1">
+          <stop offset="0%" stop-color="#1c1e24" />
+          <stop offset="45%" stop-color="#262930" />
+          <stop offset="100%" stop-color="#0f1115" />
+        </linearGradient>
+
+        <!-- Angled sheen for a single moving reflection -->
+        <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="0" />
+          <stop offset="45%" stop-color="#ffffff" stop-opacity="0" />
+          <stop offset="50%" stop-color="#ffffff" stop-opacity="0.14" />
+          <stop offset="55%" stop-color="#ffffff" stop-opacity="0" />
+          <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+        </linearGradient>
+
+        <!-- Shadow under the window -->
+        <filter id="drop" x="-20%" y="-10%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="28" stdDeviation="24" flood-color="#000000" flood-opacity="0.55" />
+        </filter>
+
+        <!-- Clip for the hinged pane — keeps edges crisp when it tilts -->
+        <clipPath id="pane-tr-clip">
+          <rect x="232" y="24" width="204" height="262" />
+        </clipPath>
+      </defs>
+
+      <g filter="url(#drop)">
+        <!-- Outer frame (metallic block) -->
+        <rect x="0" y="0" width="460" height="580" rx="6" ry="6" fill="url(#chrome-v)" />
+
+        <!-- Frame highlight — a thin edge glimmer on top + left for dimension -->
+        <rect x="0" y="0" width="460" height="3" fill="url(#chrome-h)" opacity="0.9" />
+        <rect x="0" y="0" width="3" height="580" fill="#eceef1" opacity="0.4" />
+
+        <!-- Inner cavity (dark recess behind the glass) -->
+        <rect x="20" y="20" width="420" height="540" rx="2" ry="2" fill="#08090b" />
+
+        <!-- Glass panes (2x2) — each drawn into the inner cavity -->
+        <g class="hero-window__panes">
+          <rect class="pane pane--tl" x="24" y="24" width="204" height="262" fill="url(#glass)" />
+          <rect class="pane pane--bl" x="24" y="294" width="204" height="262" fill="url(#glass)" />
+          <rect class="pane pane--br" x="232" y="294" width="204" height="262" fill="url(#glass)" />
+
+          <!-- Top-right pane: the one that hinges open on scroll -->
+          <g class="pane-hinge">
+            <rect class="pane pane--tr" x="232" y="24" width="204" height="262" fill="url(#glass)" />
+            <!-- A thin chrome inner edge visible when the pane opens -->
+            <rect class="pane-edge" x="232" y="24" width="2" height="262" fill="#c8ccd3" opacity="0.6" />
+          </g>
+
+          <!-- Animated sheen — sweeps across the whole glass area -->
+          <rect class="sheen" x="24" y="24" width="412" height="532" fill="url(#sheen)" />
+        </g>
+
+        <!-- Central mullions (cross) — drawn AFTER panes so they sit on top -->
+        <rect x="227" y="20" width="6" height="540" fill="url(#chrome-mullion)" />
+        <rect x="20" y="287" width="420" height="6" fill="url(#chrome-mullion)" />
+
+        <!-- Hardware: small chrome handle on the right edge of top-right pane -->
+        <g class="hardware">
+          <rect x="438" y="130" width="6" height="34" rx="2" fill="url(#chrome-h)" />
+          <rect x="434" y="158" width="14" height="4" rx="1.5" fill="#3a3e47" />
+        </g>
+      </g>
+    </svg>
+  </div>
+</div>
+
+<style>
+  .hero-window {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    margin-inline: auto;
+    aspect-ratio: 460 / 580;
+    perspective: 1600px;
+    transform-style: preserve-3d;
+  }
+
+  .hero-window__glow {
+    position: absolute;
+    inset: -25% -15%;
+    background:
+      radial-gradient(
+        ellipse at 50% 45%,
+        rgba(200, 204, 211, 0.22),
+        rgba(200, 204, 211, 0.06) 40%,
+        transparent 70%
+      );
+    filter: blur(30px);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .hero-window__stage {
+    width: 100%;
+    height: 100%;
+    transform:
+      rotateX(var(--mx, 0deg))
+      rotateY(var(--my, 0deg));
+    transition: transform 0.25s var(--ease-out-expo);
+    will-change: transform;
+  }
+
+  .hero-window__svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    animation: window-float 7s ease-in-out infinite;
+    transform-style: preserve-3d;
+  }
+
+  @keyframes window-float {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-10px); }
+  }
+
+  /* Draw-in on load — frame first, then panes, then mullions/hardware */
+  .hero-window__svg > g {
+    opacity: 0;
+    animation: frame-in 0.9s var(--ease-out-expo) 0.15s forwards;
+  }
+  @keyframes frame-in {
+    from { opacity: 0; transform: scale(0.985); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .pane {
+    opacity: 0;
+    transform-origin: center center;
+    transform-box: fill-box;
+    animation: pane-in 0.75s var(--ease-out-expo) forwards;
+  }
+  .pane--tl { animation-delay: 0.55s; }
+  .pane--tr { animation-delay: 0.65s; }
+  .pane--bl { animation-delay: 0.75s; }
+  .pane--br { animation-delay: 0.85s; }
+
+  @keyframes pane-in {
+    from { opacity: 0; transform: scale(0.92); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .pane-edge {
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-out-expo);
+  }
+
+  /* Hinged top-right pane — rotates on scroll via --scroll-progress (0..1) */
+  .pane-hinge {
+    transform-box: fill-box;
+    transform-origin: left center;
+    transform: perspective(900px) rotateY(calc(var(--scroll-progress, 0) * -32deg));
+    transition: transform 0.15s linear;
+    will-change: transform;
+  }
+  /* As the pane opens, the chrome inner edge fades in */
+  .hero-window[data-open="true"] .pane-edge { opacity: 1; }
+
+  /* Ambient light sweep */
+  .sheen {
+    transform-box: fill-box;
+    transform-origin: center;
+    opacity: 0;
+    animation: sheen-sweep 9s ease-in-out infinite;
+    animation-delay: 1.6s;
+  }
+  @keyframes sheen-sweep {
+    0%   { opacity: 0; transform: translateX(-60%) skewX(-12deg); }
+    8%   { opacity: 1; }
+    35%  { opacity: 0; transform: translateX(130%) skewX(-12deg); }
+    100% { opacity: 0; transform: translateX(130%) skewX(-12deg); }
+  }
+
+  /* Reduced motion — kill everything but keep the window visible */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-window__svg,
+    .hero-window__stage,
+    .pane,
+    .sheen,
+    .pane-hinge,
+    .hero-window__svg > g {
+      animation: none !important;
+      transition: none !important;
+      transform: none !important;
+      opacity: 1 !important;
+    }
+  }
+</style>
+
+<script>
+  const wrap = document.getElementById('hero-window') as HTMLElement | null;
+  const stage = wrap?.querySelector('.hero-window__stage') as HTMLElement | null;
+  const section = document.getElementById('top') as HTMLElement | null;
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (wrap && stage && section && !reduced) {
+    let targetMx = 0, targetMy = 0;
+    let mx = 0, my = 0;
+    let scrollProgress = 0;
+    let rafId = 0;
+
+    function onMouseMove(e: MouseEvent) {
+      if (!section) return;
+      const rect = section.getBoundingClientRect();
+      // Only respond when cursor is within the hero's vertical band
+      if (e.clientY < rect.top - 40 || e.clientY > rect.bottom + 40) return;
+      const xp = (e.clientX - rect.left) / rect.width - 0.5;
+      const yp = (e.clientY - rect.top) / rect.height - 0.5;
+      targetMy = xp * 10;   // rotateY ±5°
+      targetMx = yp * -7;   // rotateX ±3.5°
+    }
+
+    function onMouseLeave() {
+      targetMx = 0;
+      targetMy = 0;
+    }
+
+    function onScroll() {
+      if (!section || !wrap) return;
+      const rect = section.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const range = Math.max(1, rect.height - vh * 0.3);
+      const progress = Math.max(0, Math.min(1, -rect.top / range));
+      scrollProgress = progress;
+      wrap.style.setProperty('--scroll-progress', scrollProgress.toFixed(3));
+      wrap.dataset.open = progress > 0.05 ? 'true' : 'false';
+    }
+
+    function tick() {
+      mx += (targetMx - mx) * 0.08;
+      my += (targetMy - my) * 0.08;
+      if (stage) {
+        stage.style.setProperty('--mx', `${mx.toFixed(2)}deg`);
+        stage.style.setProperty('--my', `${my.toFixed(2)}deg`);
+      }
+      rafId = requestAnimationFrame(tick);
+    }
+
+    window.addEventListener('mousemove', onMouseMove, { passive: true });
+    document.addEventListener('mouseleave', onMouseLeave);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    onScroll();
+    tick();
+
+    // Clean up on page navigation (view transitions / turbo etc.)
+    window.addEventListener('beforeunload', () => cancelAnimationFrame(rafId), { once: true });
+  }
+</script>
