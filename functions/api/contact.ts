@@ -4,7 +4,7 @@
 //   - RESEND_API_KEY       (secret)   Resend API key
 //   - CONTACT_FROM_EMAIL   (optional) Verified sender, e.g. "ProLine <website@prolinechch.co.nz>".
 //                                     Defaults to Resend's onboarding sender until domain is verified.
-//   - CONTACT_TO_EMAIL     (optional) Recipient. Defaults to michael@prolinealuminium.co.nz.
+//   - CONTACT_TO_EMAIL     (optional) Recipient. Defaults to michael@prolinechch.co.nz.
 
 interface Env {
   RESEND_API_KEY: string;
@@ -84,7 +84,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   }
 
   const from = env.CONTACT_FROM_EMAIL || 'ProLine Website <onboarding@resend.dev>';
-  const to = env.CONTACT_TO_EMAIL || 'michael@prolinealuminium.co.nz';
+  const to = env.CONTACT_TO_EMAIL || 'michael@prolinechch.co.nz';
 
   const textBody = [
     `New enquiry from prolinechch.co.nz`,

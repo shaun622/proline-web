@@ -85,7 +85,7 @@ In **Pages → Settings → Environment variables → Production**, set:
 | --------------------- | -------- | --------------------------------------------------------------------------------------- |
 | `RESEND_API_KEY`      | Yes      | Resend API key (secret). Generate at https://resend.com/api-keys.                       |
 | `CONTACT_FROM_EMAIL`  | No       | Sender. Format `"ProLine <website@prolinechch.co.nz>"`. Requires domain verification in Resend. Defaults to `onboarding@resend.dev` which works immediately but shows as resend.dev. |
-| `CONTACT_TO_EMAIL`    | No       | Recipient. Defaults to `michael@prolinealuminium.co.nz`.                                |
+| `CONTACT_TO_EMAIL`    | No       | Recipient. Defaults to `michael@prolinechch.co.nz`.                                     |
 
 Tick **"Encrypt"** for `RESEND_API_KEY`. Redeploy after adding.
 
