@@ -81,8 +81,8 @@ import HeroWindow from './HeroWindow.astro';
     class="absolute bottom-6 left-1/2 hidden -translate-x-1/2 items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-ink-500 transition-colors hover:text-ink-300 md:inline-flex"
   >
     Scroll
-    <span class="relative block h-8 w-px bg-ink-700 overflow-hidden">
-      <span class="absolute inset-x-0 top-0 h-3 animate-[scroll-cue_2.2s_ease-in-out_infinite] bg-chrome-500"></span>
+    <span class="relative block h-11 w-px bg-ink-700 overflow-hidden">
+      <span class="absolute inset-x-0 top-0 h-3 animate-[scroll-cue_2.5s_ease-in-out_infinite] bg-chrome-500"></span>
     </span>
   </a>
 </section>
@@ -90,6 +90,6 @@ import HeroWindow from './HeroWindow.astro';
 <style>
   @keyframes scroll-cue {
     0% { transform: translateY(-100%); }
-    100% { transform: translateY(400%); }
+    100% { transform: translateY(550%); }
   }
 </style>
