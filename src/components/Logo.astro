@@ -12,11 +12,11 @@ const { class: className = 'h-9 w-auto', withWordmark = true } = Astro.props;
 <span class="inline-flex items-center gap-3">
   <LogoSvg class={className} aria-label="ProLine Aluminium" role="img" />
   {withWordmark && (
-    <span class="flex flex-col leading-none">
-      <span class="font-display text-[15px] font-semibold tracking-wide text-ink-50">
+    <span class="hidden sm:flex flex-col leading-none">
+      <span class="font-display text-[15px] font-semibold tracking-wide text-ink-50 whitespace-nowrap">
         ProLine <span class="text-chrome-400">Aluminium</span>
       </span>
-      <span class="mt-1 text-[10px] font-medium uppercase tracking-[0.22em] text-ink-500">
+      <span class="mt-1 text-[10px] font-medium uppercase tracking-[0.22em] text-ink-500 whitespace-nowrap">
         Repairs &amp; Alterations
       </span>
     </span>
