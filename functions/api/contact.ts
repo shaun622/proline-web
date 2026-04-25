@@ -1,4 +1,4 @@
-// Cloudflare Pages Function — POST /api/contact
+// Cloudflare Pages Function. POST /api/contact
 // Receives the contact form submission, validates, then sends via Resend.
 // Env bindings (set in Cloudflare Pages dashboard):
 //   - RESEND_API_KEY       (secret)   Resend API key
@@ -66,7 +66,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     return json({ ok: false, error: 'Invalid submission' }, 400);
   }
 
-  // Honeypot — bots fill every field. Silently pretend success.
+  // Honeypot. Bots fill every field, so silently pretend success.
   const honeypot = cleanLine(form.get('company'), 10);
   if (honeypot) return json({ ok: true });
 
@@ -80,7 +80,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     return json({ ok: false, error: 'Please fill in name, email, service and message.' }, 400);
   }
   if (!isEmail(email)) {
-    return json({ ok: false, error: 'That email address looks off — can you double-check it?' }, 400);
+    return json({ ok: false, error: 'That email address looks off. Can you double-check it?' }, 400);
   }
 
   const from = env.CONTACT_FROM_EMAIL || 'ProLine Website <onboarding@resend.dev>';
@@ -90,7 +90,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     `New enquiry from prolinechch.co.nz`,
     ``,
     `Name:    ${name}`,
-    `Phone:   ${phone || '—'}`,
+    `Phone:   ${phone || 'Not provided'}`,
     `Email:   ${email}`,
     `Service: ${service}`,
     ``,
@@ -106,7 +106,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       <table style="border-collapse: collapse; width: 100%;">
         <tbody>
           <tr><td style="padding:8px 0; color:#5a5f68; width:110px; vertical-align:top;">Name</td><td style="padding:8px 0;"><strong>${escapeHtml(name)}</strong></td></tr>
-          <tr><td style="padding:8px 0; color:#5a5f68; vertical-align:top;">Phone</td><td style="padding:8px 0;">${escapeHtml(phone) || '&mdash;'}</td></tr>
+          <tr><td style="padding:8px 0; color:#5a5f68; vertical-align:top;">Phone</td><td style="padding:8px 0;">${escapeHtml(phone) || 'Not provided'}</td></tr>
           <tr><td style="padding:8px 0; color:#5a5f68; vertical-align:top;">Email</td><td style="padding:8px 0;"><a href="mailto:${escapeHtml(email)}" style="color:#0a0b0d;">${escapeHtml(email)}</a></td></tr>
           <tr><td style="padding:8px 0; color:#5a5f68; vertical-align:top;">Service</td><td style="padding:8px 0;">${escapeHtml(service)}</td></tr>
         </tbody>
@@ -128,7 +128,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       from,
       to: [to],
       reply_to: email,
-      subject: `New enquiry — ${service} — ${name}`,
+      subject: `New enquiry: ${service} (from ${name})`,
       text: textBody,
       html: htmlBody,
     }),
@@ -146,7 +146,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
 // Catch wrong methods
 export const onRequest: PagesFunction<Env> = async ({ request }) => {
   if (request.method === 'POST') {
-    // Should not reach here — onRequestPost handles POST — but guard anyway.
+    // Should not reach here (onRequestPost handles POST), but guard anyway.
     return json({ ok: false, error: 'Use POST' }, 405);
   }
   return json({ ok: false, error: 'Method not allowed' }, 405);

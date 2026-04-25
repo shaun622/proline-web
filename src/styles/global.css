@@ -4,7 +4,7 @@
 @import "@fontsource-variable/space-grotesk/index.css";
 
 @theme {
-  /* Metallic greyscale — slight cool cast */
+  /* Metallic greyscale, slight cool cast */
   --color-ink-50:  #f5f6f8;
   --color-ink-100: #e8eaee;
   --color-ink-200: #d2d5db;
@@ -61,7 +61,7 @@
     color: var(--color-ink-950);
   }
 
-  /* Focus ring — visible on keyboard only */
+  /* Focus ring, visible on keyboard only */
   :focus-visible {
     outline: 2px solid var(--color-chrome-500);
     outline-offset: 3px;
@@ -127,7 +127,7 @@
   .min-h-tap { min-height: 44px; }
   .min-w-tap { min-width: 44px; }
 
-  /* Scroll-reveal — add 'in' class via IntersectionObserver */
+  /* Scroll-reveal. Add 'in' class via IntersectionObserver */
   .reveal {
     opacity: 0;
     transform: translateY(24px);

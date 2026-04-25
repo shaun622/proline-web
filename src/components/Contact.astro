@@ -6,7 +6,7 @@ const services = [
   'Hardware Replacement',
   'Locks & Security',
   'General Joinery Maintenance',
-  'Not sure — need advice',
+  'Not sure, need advice',
 ];
 ---
 
@@ -105,7 +105,7 @@ const services = [
 
             <div class="sm:col-span-2">
               <label for="message" class="block text-xs font-semibold uppercase tracking-[0.12em] text-ink-400">Details</label>
-              <textarea id="message" name="message" required rows="5" class="input mt-2" placeholder="Rough description of the job — address, rough timing, anything helpful"></textarea>
+              <textarea id="message" name="message" required rows="5" class="input mt-2" placeholder="Rough description of the job. Address, rough timing, anything helpful."></textarea>
             </div>
           </div>
 
@@ -169,7 +169,7 @@ const services = [
       const json = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
 
       if (res.ok && json.ok) {
-        setStatus('ok', "Thanks — Michael will be in touch shortly.");
+        setStatus('ok', "Thanks. Michael will be in touch shortly.");
         form.reset();
       } else {
         setStatus('err', json.error || 'Something went wrong. Please try calling 027 845 6163.');
