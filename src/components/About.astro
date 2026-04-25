@@ -1,0 +1,184 @@
+---
+import { Image } from 'astro:assets';
+import bikingSelfie from '../assets/family/biking-selfie.jpg';
+import connectFour from '../assets/family/connect-four.jpg';
+import picnicTable from '../assets/family/picnic-table.jpg';
+import familyPortrait from '../assets/family/family-portrait.jpg';
+---
+
+<section id="about" class="relative scroll-mt-24 border-t border-ink-900 bg-ink-950">
+  <!-- Soft warm glow at top, breaks up the cold metallic palette so the family
+       section feels human, not corporate. -->
+  <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 top-0 h-72 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(200,204,211,0.06),transparent_75%)]"></div>
+
+  <div class="relative mx-auto max-w-7xl px-5 py-24 sm:px-8 sm:py-32">
+    <div class="grid gap-14 lg:grid-cols-12 lg:gap-16">
+      <!-- Left: copy -->
+      <div class="lg:col-span-5 lg:pt-4">
+        <div class="reveal"><span class="eyebrow">About</span></div>
+        <h2 class="reveal mt-5 font-display text-4xl font-semibold leading-tight tracking-tight text-ink-50 sm:text-5xl" style="transition-delay:80ms">
+          A family business, <br />
+          <span class="text-chrome">on the tools.</span>
+        </h2>
+        <p class="reveal mt-6 text-base leading-relaxed text-ink-300 sm:text-lg" style="transition-delay:160ms">
+          ProLine is just Michael. He does the quoting, the fitting, the follow-up.
+          No subcontractors, no hand-offs.
+        </p>
+        <p class="reveal mt-4 text-base leading-relaxed text-ink-300 sm:text-lg" style="transition-delay:220ms">
+          Same standard he wants on his own family's place. Whether it's a single
+          stuck window or a full commercial round, the person you meet is the
+          person doing the work.
+        </p>
+
+        <div class="reveal mt-10 flex flex-wrap items-center gap-3" style="transition-delay:300ms">
+          <a href="#contact" class="btn btn-primary">
+            Talk to Michael
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14" />
+              <path d="M13 5l7 7-7 7" />
+            </svg>
+          </a>
+          <a href="tel:+64278456163" class="btn btn-secondary">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+            027 845 6163
+          </a>
+        </div>
+      </div>
+
+      <!-- Right: photo mosaic -->
+      <div class="reveal lg:col-span-7" style="transition-delay:120ms">
+        <div class="family-mosaic">
+          <figure class="family-photo family-photo--anchor">
+            <Image
+              src={bikingSelfie}
+              alt="Michael riding bikes with his daughter"
+              widths={[400, 720, 1100]}
+              sizes="(min-width: 1024px) 40vw, (min-width: 640px) 50vw, 100vw"
+              class="h-full w-full object-cover"
+              loading="lazy"
+            />
+          </figure>
+          <figure class="family-photo">
+            <Image
+              src={connectFour}
+              alt="Michael playing giant Connect 4 with his daughter"
+              widths={[300, 500, 700]}
+              sizes="(min-width: 1024px) 20vw, (min-width: 640px) 25vw, 50vw"
+              class="h-full w-full object-cover"
+              loading="lazy"
+            />
+          </figure>
+          <figure class="family-photo">
+            <Image
+              src={picnicTable}
+              alt="Michael with his daughter at a playground picnic table"
+              widths={[300, 500, 700]}
+              sizes="(min-width: 1024px) 20vw, (min-width: 640px) 25vw, 50vw"
+              class="h-full w-full object-cover"
+              loading="lazy"
+            />
+          </figure>
+          <figure class="family-photo family-photo--wide">
+            <Image
+              src={familyPortrait}
+              alt="Michael with his partner and daughter"
+              widths={[400, 720, 1100]}
+              sizes="(min-width: 1024px) 40vw, (min-width: 640px) 50vw, 100vw"
+              class="h-full w-full object-cover"
+              loading="lazy"
+            />
+          </figure>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .family-mosaic {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    grid-template-rows: 1fr 1fr auto;
+    gap: 0.75rem;
+    aspect-ratio: 5 / 6;
+  }
+
+  .family-photo {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.875rem;
+    border: 1px solid var(--color-ink-800);
+    background: var(--color-ink-900);
+    transition: transform 0.45s var(--ease-out-expo), border-color 0.45s var(--ease-out-expo), box-shadow 0.45s var(--ease-out-expo);
+  }
+
+  .family-photo:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-ink-700);
+    box-shadow: 0 18px 40px -20px rgba(0, 0, 0, 0.6);
+  }
+
+  .family-photo img {
+    transition: transform 1.2s var(--ease-out-expo), filter 0.6s var(--ease-out-expo);
+    filter: saturate(0.92) brightness(0.96);
+  }
+
+  .family-photo:hover img {
+    transform: scale(1.04);
+    filter: saturate(1) brightness(1);
+  }
+
+  /* Anchor (tall left) */
+  .family-photo--anchor {
+    grid-column: 1;
+    grid-row: 1 / 3;
+  }
+
+  /* Wide bottom photo spans both columns */
+  .family-photo--wide {
+    grid-column: 1 / 3;
+    grid-row: 3;
+    aspect-ratio: 16 / 9;
+  }
+
+  /* Subtle warm vignette across the whole mosaic, ties photos together */
+  .family-photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 60%, rgba(10, 11, 13, 0.35));
+    pointer-events: none;
+    opacity: 0.5;
+    transition: opacity 0.45s var(--ease-out-expo);
+  }
+  .family-photo:hover::after { opacity: 0.2; }
+
+  /* Mobile: stack into a single column, keep order */
+  @media (max-width: 640px) {
+    .family-mosaic {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+      aspect-ratio: auto;
+      gap: 0.625rem;
+    }
+    .family-photo--anchor,
+    .family-photo--wide,
+    .family-photo {
+      grid-column: 1;
+      grid-row: auto;
+      aspect-ratio: 4 / 5;
+    }
+    .family-photo--wide { aspect-ratio: 16 / 10; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .family-photo,
+    .family-photo img,
+    .family-photo::after {
+      transition: none !important;
+      transform: none !important;
+    }
+  }
+</style>
