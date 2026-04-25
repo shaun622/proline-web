@@ -199,6 +199,17 @@
     min-height: 7rem;
   }
 
+  /* Native select dropdown options default to a white system background
+     in most browsers. Force them dark so the text stays legible when the
+     dropdown is open. */
+  select.input option {
+    background-color: var(--color-ink-900);
+    color: var(--color-ink-50);
+  }
+  select.input option[value=""] {
+    color: var(--color-ink-400);
+  }
+
   /* Card */
   .card {
     background: rgba(255,255,255,0.015);
