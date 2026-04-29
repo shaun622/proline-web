@@ -1,0 +1,184 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import ContactForm from '../components/ContactForm.astro';
+
+const site = Astro.site ?? new URL('https://prolinechch.co.nz');
+const canonical = new URL('/contact', site).toString();
+
+const contactSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  name: 'Contact ProLine Aluminium',
+  url: canonical,
+  description:
+    'Contact ProLine Aluminium for window and door repairs, glass replacement, retrofit double glazing across Christchurch and Canterbury. Free quotes.',
+  mainEntity: {
+    '@type': 'LocalBusiness',
+    '@id': `${site.toString()}#business`,
+    name: 'ProLine Aluminium',
+    telephone: '+64278456163',
+    email: 'michael@prolinechch.co.nz',
+    url: site.toString(),
+  },
+};
+
+const breadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: site.toString() },
+    { '@type': 'ListItem', position: 2, name: 'Contact', item: canonical },
+  ],
+};
+---
+
+<Layout
+  title="Contact ProLine Aluminium | Christchurch & Canterbury | Free Quotes"
+  description="Contact Michael at ProLine Aluminium for window and door repairs, glass replacement, and retrofit double glazing across Christchurch and Canterbury. 027 845 6163. Free on-site quotes."
+  canonical={canonical}
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(contactSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumb)} />
+  </Fragment>
+
+  <Nav />
+
+  <main>
+    <!-- Hero -->
+    <section class="relative overflow-hidden bg-brushed noise isolate">
+      <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-ink-950"></div>
+
+      <div class="mx-auto max-w-6xl px-5 pt-32 pb-16 sm:px-8 sm:pt-36 sm:pb-20">
+        <nav class="text-xs text-ink-500" aria-label="Breadcrumb">
+          <ol class="flex flex-wrap items-center gap-1.5">
+            <li><a href="/" class="hover:text-ink-200 transition-colors">Home</a></li>
+            <li aria-hidden="true">/</li>
+            <li class="text-ink-300" aria-current="page">Contact</li>
+          </ol>
+        </nav>
+
+        <div class="mt-10">
+          <span class="eyebrow">Get in touch</span>
+        </div>
+        <h1 class="mt-5 font-display text-4xl font-semibold leading-[1.05] tracking-tight text-ink-50 sm:text-5xl md:text-6xl">
+          Talk to Michael, <br /><span class="text-chrome">straight away.</span>
+        </h1>
+        <p class="mt-6 max-w-3xl text-lg leading-relaxed text-ink-300 sm:text-xl">
+          Phone, email, or fill in the form. Most enquiries get a reply within the working day. Quotes are always free, on-site, no obligation.
+        </p>
+      </div>
+    </section>
+
+    <!-- Form + details -->
+    <section id="contact" class="relative bg-ink-950">
+      <div aria-hidden="true" class="hairline absolute inset-x-0 top-0"></div>
+
+      <div class="mx-auto max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+        <div class="grid gap-12 lg:grid-cols-12">
+          <!-- Left: contact details -->
+          <div class="lg:col-span-5">
+            <h2 class="font-display text-2xl font-semibold leading-tight tracking-tight text-ink-50 sm:text-3xl">
+              Direct contact.
+            </h2>
+
+            <dl class="mt-8 space-y-4 text-sm">
+              <div class="flex items-start gap-4">
+                <div class="mt-0.5 flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-b from-white/[0.06] to-white/[0.015] ring-1 ring-inset ring-ink-700">
+                  <svg class="h-4 w-4 text-chrome-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                  </svg>
+                </div>
+                <div>
+                  <dt class="text-xs font-medium uppercase tracking-wider text-ink-400">Phone</dt>
+                  <dd class="mt-0.5"><a href="tel:+64278456163" class="font-display text-lg font-semibold text-ink-50 hover:text-chrome-400 transition-colors">027 845 6163</a></dd>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-4">
+                <div class="mt-0.5 flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-b from-white/[0.06] to-white/[0.015] ring-1 ring-inset ring-ink-700">
+                  <svg class="h-4 w-4 text-chrome-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="5" width="18" height="14" rx="2"/>
+                    <path d="M3 7l9 6 9-6" />
+                  </svg>
+                </div>
+                <div>
+                  <dt class="text-xs font-medium uppercase tracking-wider text-ink-400">Email</dt>
+                  <dd class="mt-0.5"><a href="mailto:michael@prolinechch.co.nz" class="font-display text-lg font-semibold text-ink-50 hover:text-chrome-400 transition-colors break-all">michael@prolinechch.co.nz</a></dd>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-4">
+                <div class="mt-0.5 flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-b from-white/[0.06] to-white/[0.015] ring-1 ring-inset ring-ink-700">
+                  <svg class="h-4 w-4 text-chrome-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M12 7v5l3 2" />
+                  </svg>
+                </div>
+                <div>
+                  <dt class="text-xs font-medium uppercase tracking-wider text-ink-400">Hours</dt>
+                  <dd class="mt-0.5 font-display text-base font-semibold text-ink-50">Mon to Sat, 6:00am to 5:00pm</dd>
+                  <dd class="mt-0.5 text-xs text-ink-400">Out-of-hours messages picked up next morning.</dd>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-4">
+                <div class="mt-0.5 flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-b from-white/[0.06] to-white/[0.015] ring-1 ring-inset ring-ink-700">
+                  <svg class="h-4 w-4 text-chrome-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 21s-7-7.5-7-13a7 7 0 1114 0c0 5.5-7 13-7 13z" />
+                    <circle cx="12" cy="8" r="2.5" />
+                  </svg>
+                </div>
+                <div>
+                  <dt class="text-xs font-medium uppercase tracking-wider text-ink-400">Service area</dt>
+                  <dd class="mt-0.5 font-display text-base font-semibold text-ink-50">Christchurch &amp; Canterbury</dd>
+                  <dd class="mt-0.5 text-xs"><a href="/areas-we-cover" class="text-chrome-400 hover:text-ink-200 transition-colors">See full area list</a></dd>
+                </div>
+              </div>
+            </dl>
+
+            <div class="mt-10 rounded-2xl border border-ink-800 bg-white/[0.02] p-5">
+              <p class="text-sm font-display font-semibold text-ink-50">Photos help.</p>
+              <p class="mt-1 text-sm leading-relaxed text-ink-300">
+                Email or text a photo of the issue and we can usually scope the job before we visit.
+              </p>
+            </div>
+          </div>
+
+          <!-- Right: form -->
+          <div class="lg:col-span-7">
+            <h2 class="sr-only">Send an enquiry</h2>
+            <ContactForm />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick reassurance -->
+    <section class="relative border-t border-ink-900 bg-ink-900">
+      <div class="mx-auto max-w-5xl px-5 py-16 sm:px-8 sm:py-20">
+        <div class="grid gap-3 sm:grid-cols-3">
+          <div class="card">
+            <div class="text-[11px] font-semibold uppercase tracking-[0.15em] text-chrome-400">Free quotes</div>
+            <h3 class="mt-2 font-display text-base font-semibold text-ink-50">On-site, no obligation.</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink-300">We assess properly before pricing. You get a fixed number, not a vague range.</p>
+          </div>
+          <div class="card">
+            <div class="text-[11px] font-semibold uppercase tracking-[0.15em] text-chrome-400">Quick response</div>
+            <h3 class="mt-2 font-display text-base font-semibold text-ink-50">Within 48 hours.</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink-300">Most quotes booked inside two working days. Urgent jobs same-day where we can.</p>
+          </div>
+          <div class="card">
+            <div class="text-[11px] font-semibold uppercase tracking-[0.15em] text-chrome-400">One contact</div>
+            <h3 class="mt-2 font-display text-base font-semibold text-ink-50">Always Michael.</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink-300">No call centres, no project handlers. The person you speak to is the person on the job.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

@@ -6,8 +6,40 @@ import Services from '../components/Services.astro';
 import WhyUs from '../components/WhyUs.astro';
 import About from '../components/About.astro';
 import Gallery from '../components/Gallery.astro';
+import FAQList from '../components/FAQList.astro';
 import Contact from '../components/Contact.astro';
 import Footer from '../components/Footer.astro';
+
+const homeFaqs = [
+  {
+    q: 'Do you charge for quotes?',
+    a: "No. Quotes are always free, on-site, and no-obligation across Christchurch and Canterbury. You only pay if we go ahead with the work, and you'll have a fixed price before that happens.",
+  },
+  {
+    q: 'How quickly can you come out for a quote?',
+    a: 'Usually within 48 hours across Christchurch and most of Canterbury. Urgent jobs (security risks, broken doors that won\'t lock, smashed glass) we try to get to same-day where we can.',
+  },
+  {
+    q: 'Is it cheaper to repair or replace aluminium joinery?',
+    a: "Repair, almost always. The vast majority of aluminium window and door problems are repairable for a fraction of the cost of full replacement. We'll only suggest replacement when the frame is corroded or damaged beyond economical repair, and we'll tell you straight if that's the case.",
+  },
+  {
+    q: 'Do you work on commercial properties as well as homes?',
+    a: 'Yes. Residential repairs are the bulk of the work, but we also handle shopfronts, body corporates, schools, and rental properties. Annual maintenance rounds for commercial sites can be scheduled.',
+  },
+  {
+    q: 'Where in Canterbury do you cover?',
+    a: 'Christchurch and the wider Canterbury region. Selwyn (Rolleston, Lincoln, West Melton, Darfield), Waimakariri (Rangiora, Kaiapoi, Pegasus), Banks Peninsula, and most inland Canterbury towns. See the full list on the areas-we-cover page.',
+  },
+  {
+    q: 'Who actually does the work?',
+    a: "Michael does. ProLine is owner-operated. The person who quotes the job is the same person fitting the parts and signing it off. No subcontractors, no hand-offs.",
+  },
+  {
+    q: "What payment methods do you accept?",
+    a: 'Bank transfer or cash. Invoices issued on completion of the job. For larger or staged work we agree the payment schedule up-front in the quote.',
+  },
+];
 ---
 
 <Layout>
@@ -18,6 +50,12 @@ import Footer from '../components/Footer.astro';
     <WhyUs />
     <About />
     <Gallery />
+    <FAQList
+      faqs={homeFaqs}
+      heading="Common questions"
+      eyebrow="FAQ"
+      intro="Quick answers to the things people usually ask before getting in touch. Service-specific questions live on each service page."
+    />
     <Contact />
   </main>
   <Footer />

@@ -1,0 +1,83 @@
+---
+interface FAQ {
+  q: string;
+  a: string;
+}
+
+interface Props {
+  faqs: FAQ[];
+  heading?: string;
+  eyebrow?: string;
+  intro?: string;
+  /**
+   * When true the component renders the JSON-LD FAQPage schema for these
+   * Q&As. Set false on pages where another instance of FAQList already does.
+   */
+  emitSchema?: boolean;
+}
+
+const {
+  faqs,
+  heading = 'Frequently asked',
+  eyebrow = 'FAQ',
+  intro,
+  emitSchema = true,
+} = Astro.props;
+
+const schema = emitSchema
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: f.a,
+        },
+      })),
+    }
+  : null;
+---
+
+<section class="relative scroll-mt-24 bg-ink-950">
+  <div class="mx-auto max-w-4xl px-5 py-20 sm:px-8 sm:py-24">
+    <div class="reveal"><span class="eyebrow">{eyebrow}</span></div>
+    <h2 class="reveal mt-5 font-display text-3xl font-semibold leading-tight tracking-tight text-ink-50 sm:text-4xl" style="transition-delay:80ms">
+      {heading}
+    </h2>
+    {intro && (
+      <p class="reveal mt-4 max-w-2xl text-base leading-relaxed text-ink-300 sm:text-lg" style="transition-delay:160ms">
+        {intro}
+      </p>
+    )}
+
+    <div class="reveal mt-10 divide-y divide-ink-800 border-y border-ink-800" style="transition-delay:240ms">
+      {faqs.map((f) => (
+        <details class="group">
+          <summary class="flex cursor-pointer list-none items-start justify-between gap-6 py-5 text-left">
+            <span class="font-display text-base font-semibold text-ink-50 sm:text-lg">
+              {f.q}
+            </span>
+            <span class="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-ink-700 bg-white/[0.02] text-chrome-400 transition-transform duration-300 group-open:rotate-45">
+              <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 5v14" />
+                <path d="M5 12h14" />
+              </svg>
+            </span>
+          </summary>
+          <div class="pb-6 pr-12 text-sm leading-relaxed text-ink-300 sm:text-base">
+            {f.a}
+          </div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+{schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
+
+<style>
+  details > summary::-webkit-details-marker { display: none; }
+  details > summary { user-select: none; }
+</style>

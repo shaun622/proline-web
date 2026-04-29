@@ -1,42 +1,62 @@
 ---
+import { getCollection } from 'astro:content';
 import Logo from './Logo.astro';
+
+const services = (await getCollection('services')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+
 const year = new Date().getFullYear();
 ---
 
 <footer class="relative border-t border-ink-900 bg-ink-950">
   <div class="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-16">
-    <div class="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
-      <div class="max-w-sm">
+    <div class="grid gap-10 md:grid-cols-12">
+      <div class="md:col-span-5 max-w-sm">
         <Logo class="h-9 w-auto text-ink-50" />
         <p class="mt-5 text-sm leading-relaxed text-ink-400">
-          Aluminium joinery repairs and alterations across Christchurch and Canterbury. Residential and commercial.
+          Aluminium joinery repairs and alterations across Christchurch and Canterbury. Residential and commercial. Owner-operated, free quotes.
         </p>
+        <div class="mt-6 space-y-2 text-sm">
+          <a href="tel:+64278456163" class="block text-ink-200 hover:text-ink-50 transition-colors">027 845 6163</a>
+          <a href="mailto:michael@prolinechch.co.nz" class="block text-ink-300 hover:text-ink-50 transition-colors break-all">michael@prolinechch.co.nz</a>
+          <p class="text-ink-400">Mon to Sat, 6:00am to 5:00pm</p>
+        </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-10 text-sm sm:grid-cols-3">
+      <div class="md:col-span-7 grid grid-cols-2 gap-10 text-sm sm:grid-cols-3">
         <div>
           <h4 class="text-xs font-semibold uppercase tracking-[0.15em] text-chrome-400">Services</h4>
           <ul class="mt-4 space-y-2.5 text-ink-300">
-            <li><a href="#services" class="hover:text-ink-50 transition-colors">Window &amp; door repairs</a></li>
-            <li><a href="#services" class="hover:text-ink-50 transition-colors">Broken glass</a></li>
-            <li><a href="#services" class="hover:text-ink-50 transition-colors">Retrofit glazing</a></li>
-            <li><a href="#services" class="hover:text-ink-50 transition-colors">Locks &amp; hardware</a></li>
+            {services.map((s) => {
+              const slug = s.id.replace(/\.md$/, '');
+              return (
+                <li>
+                  <a href={`/services/${slug}`} class="hover:text-ink-50 transition-colors">
+                    {s.data.title}
+                  </a>
+                </li>
+              );
+            })}
           </ul>
         </div>
         <div>
           <h4 class="text-xs font-semibold uppercase tracking-[0.15em] text-chrome-400">Company</h4>
           <ul class="mt-4 space-y-2.5 text-ink-300">
-            <li><a href="#why" class="hover:text-ink-50 transition-colors">About</a></li>
-            <li><a href="#work" class="hover:text-ink-50 transition-colors">Recent work</a></li>
-            <li><a href="#contact" class="hover:text-ink-50 transition-colors">Contact</a></li>
+            <li><a href="/about" class="hover:text-ink-50 transition-colors">About Michael</a></li>
+            <li><a href="/areas-we-cover" class="hover:text-ink-50 transition-colors">Areas we cover</a></li>
+            <li><a href="/#work" class="hover:text-ink-50 transition-colors">Recent work</a></li>
+            <li><a href="/contact" class="hover:text-ink-50 transition-colors">Contact</a></li>
           </ul>
         </div>
         <div>
-          <h4 class="text-xs font-semibold uppercase tracking-[0.15em] text-chrome-400">Contact</h4>
+          <h4 class="text-xs font-semibold uppercase tracking-[0.15em] text-chrome-400">Service area</h4>
           <ul class="mt-4 space-y-2.5 text-ink-300">
-            <li><a href="tel:+64278456163" class="hover:text-ink-50 transition-colors">027 845 6163</a></li>
-            <li><a href="mailto:michael@prolinechch.co.nz" class="hover:text-ink-50 transition-colors break-all">michael@prolinechch.co.nz</a></li>
-            <li class="text-ink-400">Christchurch &amp; Canterbury</li>
+            <li>Christchurch</li>
+            <li>Selwyn</li>
+            <li>Waimakariri</li>
+            <li>Banks Peninsula</li>
+            <li>Wider Canterbury</li>
           </ul>
         </div>
       </div>

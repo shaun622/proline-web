@@ -1,0 +1,119 @@
+---
+const services = [
+  'Window & Door Repairs',
+  'Broken Glass Replacement',
+  'Retrofit Double Glazing',
+  'Hardware Replacement',
+  'Locks & Security',
+  'General Joinery Maintenance',
+  'Not sure, need advice',
+];
+---
+
+<form
+  id="contact-form"
+  action="/api/contact"
+  method="POST"
+  class="card relative overflow-hidden !p-6 sm:!p-8"
+  novalidate
+>
+  <!-- Honeypot -->
+  <input type="text" name="company" tabindex="-1" autocomplete="off" class="sr-only" aria-hidden="true" />
+
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div class="sm:col-span-1">
+      <label for="name" class="block text-xs font-semibold uppercase tracking-[0.12em] text-ink-400">Name</label>
+      <input id="name" name="name" type="text" required class="input mt-2" placeholder="Your name" />
+    </div>
+
+    <div class="sm:col-span-1">
+      <label for="phone" class="block text-xs font-semibold uppercase tracking-[0.12em] text-ink-400">Phone</label>
+      <input id="phone" name="phone" type="tel" inputmode="tel" class="input mt-2" placeholder="027…" />
+    </div>
+
+    <div class="sm:col-span-2">
+      <label for="email" class="block text-xs font-semibold uppercase tracking-[0.12em] text-ink-400">Email</label>
+      <input id="email" name="email" type="email" required autocomplete="email" class="input mt-2" placeholder="you@email.co.nz" />
+    </div>
+
+    <div class="sm:col-span-2">
+      <label for="service" class="block text-xs font-semibold uppercase tracking-[0.12em] text-ink-400">What can we help with?</label>
+      <select id="service" name="service" class="input mt-2" required>
+        <option value="">Select a service</option>
+        {services.map((s) => <option value={s}>{s}</option>)}
+      </select>
+    </div>
+
+    <div class="sm:col-span-2">
+      <label for="message" class="block text-xs font-semibold uppercase tracking-[0.12em] text-ink-400">Details</label>
+      <textarea id="message" name="message" required rows="5" class="input mt-2" placeholder="Rough description of the job. Address, rough timing, anything helpful."></textarea>
+    </div>
+  </div>
+
+  <div class="mt-6 flex flex-wrap items-center justify-between gap-4">
+    <p class="text-xs text-ink-500">
+      Typical response within 48 hours. No obligation.
+    </p>
+    <button type="submit" id="submit-btn" class="btn btn-primary">
+      <span class="btn-label">Send enquiry</span>
+      <svg class="btn-spinner h-4 w-4 hidden animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M21 12a9 9 0 11-6.22-8.56" />
+      </svg>
+    </button>
+  </div>
+
+  <div id="form-status" class="mt-5 hidden rounded-lg border px-4 py-3 text-sm" role="status" aria-live="polite"></div>
+</form>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const btn = document.getElementById('submit-btn') as HTMLButtonElement | null;
+  const status = document.getElementById('form-status') as HTMLDivElement | null;
+
+  function setStatus(kind: 'ok' | 'err' | 'info', message: string) {
+    if (!status) return;
+    status.classList.remove('hidden');
+    status.textContent = message;
+    status.className =
+      'mt-5 rounded-lg border px-4 py-3 text-sm ' +
+      (kind === 'ok'
+        ? 'border-emerald-500/30 bg-emerald-500/5 text-emerald-300'
+        : kind === 'err'
+          ? 'border-red-500/30 bg-red-500/5 text-red-300'
+          : 'border-ink-700 bg-white/[0.02] text-ink-300');
+  }
+
+  function setBusy(busy: boolean) {
+    if (!btn) return;
+    btn.disabled = busy;
+    btn.querySelector('.btn-label')?.classList.toggle('hidden', busy);
+    btn.querySelector('.btn-spinner')?.classList.toggle('hidden', !busy);
+  }
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form) return;
+    if (!form.reportValidity()) return;
+
+    setBusy(true);
+    setStatus('info', 'Sending…');
+
+    const data = new FormData(form);
+
+    try {
+      const res = await fetch('/api/contact', { method: 'POST', body: data });
+      const json = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+
+      if (res.ok && json.ok) {
+        setStatus('ok', "Thanks. Michael will be in touch shortly.");
+        form.reset();
+      } else {
+        setStatus('err', json.error || 'Something went wrong. Please try calling 027 845 6163.');
+      }
+    } catch {
+      setStatus('err', 'Network error. Please try calling 027 845 6163.');
+    } finally {
+      setBusy(false);
+    }
+  });
+</script>

@@ -1,22 +1,12 @@
 ---
-const services = [
-  'Window & Door Repairs',
-  'Broken Glass Replacement',
-  'Retrofit Double Glazing',
-  'Hardware Replacement',
-  'Locks & Security',
-  'General Joinery Maintenance',
-  'Not sure, need advice',
-];
+import ContactForm from './ContactForm.astro';
 ---
 
 <section id="contact" class="relative scroll-mt-24 border-t border-ink-900 bg-ink-950">
-  <!-- Top chrome highlight -->
   <div aria-hidden="true" class="hairline absolute inset-x-0 top-0"></div>
 
   <div class="mx-auto max-w-7xl px-5 py-24 sm:px-8 sm:py-32">
     <div class="grid gap-14 lg:grid-cols-12">
-      <!-- Left: intro + direct contact info -->
       <div class="lg:col-span-5">
         <div class="reveal"><span class="eyebrow">Get in touch</span></div>
         <h2 class="reveal mt-5 font-display text-4xl font-semibold leading-tight tracking-tight text-ink-50 sm:text-5xl" style="transition-delay:80ms">
@@ -55,6 +45,19 @@ const services = [
           <div class="flex items-start gap-4">
             <div class="mt-0.5 flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-b from-white/[0.06] to-white/[0.015] ring-1 ring-inset ring-ink-700">
               <svg class="h-4 w-4 text-chrome-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 7v5l3 2" />
+              </svg>
+            </div>
+            <div>
+              <dt class="text-xs font-medium uppercase tracking-wider text-ink-400">Hours</dt>
+              <dd class="mt-0.5 font-display text-base font-semibold text-ink-50">Mon to Sat, 6:00am to 5:00pm</dd>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <div class="mt-0.5 flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-b from-white/[0.06] to-white/[0.015] ring-1 ring-inset ring-ink-700">
+              <svg class="h-4 w-4 text-chrome-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 21s-7-7.5-7-13a7 7 0 1114 0c0 5.5-7 13-7 13z" />
                 <circle cx="12" cy="8" r="2.5" />
               </svg>
@@ -62,122 +65,15 @@ const services = [
             <div>
               <dt class="text-xs font-medium uppercase tracking-wider text-ink-400">Service area</dt>
               <dd class="mt-0.5 font-display text-lg font-semibold text-ink-50">Christchurch &amp; Canterbury</dd>
+              <dd class="mt-0.5 text-xs"><a href="/areas-we-cover" class="text-chrome-400 hover:text-ink-200 transition-colors">See full area list</a></dd>
             </div>
           </div>
         </dl>
       </div>
 
-      <!-- Right: form -->
-      <div class="lg:col-span-7">
-        <form
-          id="contact-form"
-          action="/api/contact"
-          method="POST"
-          class="reveal card relative overflow-hidden !p-6 sm:!p-8"
-          novalidate
-        >
-          <!-- Honeypot -->
-          <input type="text" name="company" tabindex="-1" autocomplete="off" class="sr-only" aria-hidden="true" />
-
-          <div class="grid gap-4 sm:grid-cols-2">
-            <div class="sm:col-span-1">
-              <label for="name" class="block text-xs font-semibold uppercase tracking-[0.12em] text-ink-400">Name</label>
-              <input id="name" name="name" type="text" required class="input mt-2" placeholder="Your name" />
-            </div>
-
-            <div class="sm:col-span-1">
-              <label for="phone" class="block text-xs font-semibold uppercase tracking-[0.12em] text-ink-400">Phone</label>
-              <input id="phone" name="phone" type="tel" inputmode="tel" class="input mt-2" placeholder="027…" />
-            </div>
-
-            <div class="sm:col-span-2">
-              <label for="email" class="block text-xs font-semibold uppercase tracking-[0.12em] text-ink-400">Email</label>
-              <input id="email" name="email" type="email" required autocomplete="email" class="input mt-2" placeholder="you@email.co.nz" />
-            </div>
-
-            <div class="sm:col-span-2">
-              <label for="service" class="block text-xs font-semibold uppercase tracking-[0.12em] text-ink-400">What can we help with?</label>
-              <select id="service" name="service" class="input mt-2" required>
-                <option value="">Select a service</option>
-                {services.map((s) => <option value={s}>{s}</option>)}
-              </select>
-            </div>
-
-            <div class="sm:col-span-2">
-              <label for="message" class="block text-xs font-semibold uppercase tracking-[0.12em] text-ink-400">Details</label>
-              <textarea id="message" name="message" required rows="5" class="input mt-2" placeholder="Rough description of the job. Address, rough timing, anything helpful."></textarea>
-            </div>
-          </div>
-
-          <div class="mt-6 flex flex-wrap items-center justify-between gap-4">
-            <p class="text-xs text-ink-500">
-              Typical response within 48 hours. No obligation.
-            </p>
-            <button type="submit" id="submit-btn" class="btn btn-primary">
-              <span class="btn-label">Send enquiry</span>
-              <svg class="btn-spinner h-4 w-4 hidden animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                <path d="M21 12a9 9 0 11-6.22-8.56" />
-              </svg>
-            </button>
-          </div>
-
-          <!-- Status region -->
-          <div id="form-status" class="mt-5 hidden rounded-lg border px-4 py-3 text-sm" role="status" aria-live="polite"></div>
-        </form>
+      <div class="reveal lg:col-span-7" style="transition-delay:120ms">
+        <ContactForm />
       </div>
     </div>
   </div>
 </section>
-
-<script>
-  const form = document.getElementById('contact-form') as HTMLFormElement | null;
-  const btn = document.getElementById('submit-btn') as HTMLButtonElement | null;
-  const status = document.getElementById('form-status') as HTMLDivElement | null;
-
-  function setStatus(kind: 'ok' | 'err' | 'info', message: string) {
-    if (!status) return;
-    status.classList.remove('hidden');
-    status.textContent = message;
-    status.className =
-      'mt-5 rounded-lg border px-4 py-3 text-sm ' +
-      (kind === 'ok'
-        ? 'border-emerald-500/30 bg-emerald-500/5 text-emerald-300'
-        : kind === 'err'
-          ? 'border-red-500/30 bg-red-500/5 text-red-300'
-          : 'border-ink-700 bg-white/[0.02] text-ink-300');
-  }
-
-  function setBusy(busy: boolean) {
-    if (!btn) return;
-    btn.disabled = busy;
-    btn.querySelector('.btn-label')?.classList.toggle('hidden', busy);
-    btn.querySelector('.btn-spinner')?.classList.toggle('hidden', !busy);
-  }
-
-  form?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    if (!form) return;
-    if (!form.reportValidity()) return;
-
-    setBusy(true);
-    setStatus('info', 'Sending…');
-
-    const data = new FormData(form);
-
-    try {
-      const res = await fetch('/api/contact', { method: 'POST', body: data });
-      const json = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
-
-      if (res.ok && json.ok) {
-        setStatus('ok', "Thanks. Michael will be in touch shortly.");
-        form.reset();
-      } else {
-        setStatus('err', json.error || 'Something went wrong. Please try calling 027 845 6163.');
-      }
-    } catch {
-      setStatus('err', 'Network error. Please try calling 027 845 6163.');
-    } finally {
-      setBusy(false);
-    }
-  });
-</script>

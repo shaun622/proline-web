@@ -6,38 +6,170 @@ interface Props {
   description?: string;
   canonical?: string;
   ogImage?: string;
+  /** Default 'website'. Use 'article' on blog/case-study pages later. */
+  ogType?: string;
+  /** Set to true on legal/utility pages we don't want in search results. */
+  noindex?: boolean;
 }
 
 const {
   title = 'ProLine Aluminium | Aluminium Joinery Repairs & Alterations, Christchurch',
-  description = 'Christchurch aluminium joinery specialists. Window and door repairs, broken glass replacement, hardware replacement, retrofit glazing. Residential and commercial. Free quotes.',
+  description = "Christchurch's aluminium joinery specialists. Window and door repairs, broken glass replacement, retrofit double glazing, hardware, locks, maintenance. Owner-operated, free quotes across Canterbury.",
   canonical,
   ogImage = '/og-image.png',
+  ogType = 'website',
+  noindex = false,
 } = Astro.props;
 
 const site = Astro.site ?? new URL('https://prolinechch.co.nz');
 const canonicalURL = canonical ?? new URL(Astro.url.pathname, site).toString();
 const ogImageURL = new URL(ogImage, site).toString();
 
-const jsonLd = {
+// Christchurch geo for local SEO
+const CHC_LAT = -43.5321;
+const CHC_LNG = 172.6362;
+
+// Single LocalBusiness schema, referenced by @id from all other schemas on
+// per-page basis. Lives on every page.
+const localBusiness = {
   '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
+  '@type': ['LocalBusiness', 'HomeAndConstructionBusiness'],
+  '@id': `${site.toString()}#business`,
   name: 'ProLine Aluminium',
-  description,
+  alternateName: 'ProLine Aluminium Repairs & Alterations',
+  description:
+    'Aluminium joinery specialists in Christchurch and Canterbury. Window and door repairs, broken glass replacement, retrofit double glazing, hardware, locks, and joinery maintenance. Owner-operated, free quotes, residential and commercial.',
+  slogan: 'Aluminium joinery, done right.',
+  url: site.toString(),
   telephone: '+64278456163',
   email: 'michael@prolinechch.co.nz',
-  url: site.toString(),
   image: ogImageURL,
-  areaServed: [
-    { '@type': 'City', name: 'Christchurch' },
-    { '@type': 'AdministrativeArea', name: 'Canterbury' },
-  ],
+  logo: new URL('/logo.svg', site).toString(),
+  priceRange: '$$',
+  paymentAccepted: ['Cash', 'Bank Transfer', 'Invoice'],
+  currenciesAccepted: 'NZD',
+  foundingDate: '2013-01-01',
+  founder: {
+    '@type': 'Person',
+    name: 'Michael',
+    jobTitle: 'Owner and Aluminium Specialist',
+  },
   address: {
     '@type': 'PostalAddress',
+    addressLocality: 'Christchurch',
     addressRegion: 'Canterbury',
     addressCountry: 'NZ',
   },
-  priceRange: '$$',
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: CHC_LAT,
+    longitude: CHC_LNG,
+  },
+  areaServed: [
+    { '@type': 'City', name: 'Christchurch' },
+    { '@type': 'AdministrativeArea', name: 'Canterbury' },
+    { '@type': 'AdministrativeArea', name: 'Selwyn District' },
+    { '@type': 'AdministrativeArea', name: 'Waimakariri District' },
+    { '@type': 'AdministrativeArea', name: 'Banks Peninsula' },
+  ],
+  serviceArea: {
+    '@type': 'GeoCircle',
+    geoMidpoint: {
+      '@type': 'GeoCoordinates',
+      latitude: CHC_LAT,
+      longitude: CHC_LNG,
+    },
+    geoRadius: '80000', // metres
+  },
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+      opens: '06:00',
+      closes: '17:00',
+    },
+  ],
+  knowsAbout: [
+    'aluminium joinery repair',
+    'window repair',
+    'door repair',
+    'broken glass replacement',
+    'retrofit double glazing',
+    'IGU replacement',
+    'window hardware replacement',
+    'window and door locks',
+    'sliding door rollers',
+    'friction stays',
+    'weather seal replacement',
+    'commercial joinery maintenance',
+    'aluminium windows Christchurch',
+    'aluminium doors Canterbury',
+  ],
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Aluminium joinery services',
+    itemListElement: [
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: 'Aluminium window and door repairs',
+          url: new URL('/services/window-and-door-repairs', site).toString(),
+        },
+      },
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: 'Broken glass replacement',
+          url: new URL('/services/broken-glass-replacement', site).toString(),
+        },
+      },
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: 'Retrofit double glazing',
+          url: new URL('/services/retrofit-double-glazing', site).toString(),
+        },
+      },
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: 'Window and door hardware replacement',
+          url: new URL('/services/hardware-replacement', site).toString(),
+        },
+      },
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: 'Locks and security',
+          url: new URL('/services/locks-and-security', site).toString(),
+        },
+      },
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: 'General joinery maintenance',
+          url: new URL('/services/general-joinery-maintenance', site).toString(),
+        },
+      },
+    ],
+  },
+};
+
+// WebSite schema with sitelinks support
+const website = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${site.toString()}#website`,
+  url: site.toString(),
+  name: 'ProLine Aluminium',
+  publisher: { '@id': `${site.toString()}#business` },
+  inLanguage: 'en-NZ',
 };
 ---
 
@@ -52,16 +184,33 @@ const jsonLd = {
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL} />
 
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {!noindex && <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />}
+
+    <!-- Geo tags for local SEO (legacy but still indexed by some crawlers) -->
+    <meta name="geo.region" content="NZ-CAN" />
+    <meta name="geo.placename" content="Christchurch" />
+    <meta name="geo.position" content={`${CHC_LAT};${CHC_LNG}`} />
+    <meta name="ICBM" content={`${CHC_LAT}, ${CHC_LNG}`} />
+
+    <!-- Brand / theme -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#0a0b0d" />
+    <meta name="format-detection" content="telephone=yes" />
+
+    <!-- Performance: preconnect not really needed since fonts are bundled.
+         Keep prefetch hints for Cloudflare's CDN where the OG image lives. -->
 
     <!-- Open Graph -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:image" content={ogImageURL} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="ProLine Aluminium — Repairs & Alterations, Christchurch & Canterbury" />
     <meta property="og:locale" content="en_NZ" />
     <meta property="og:site_name" content="ProLine Aluminium" />
 
@@ -71,13 +220,17 @@ const jsonLd = {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageURL} />
 
-    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <!-- Sitewide schemas. Page-specific schemas are appended via the
+         "head" slot on individual pages. -->
+    <script type="application/ld+json" set:html={JSON.stringify(localBusiness)} />
+    <script type="application/ld+json" set:html={JSON.stringify(website)} />
+
+    <slot name="head" />
   </head>
   <body class="antialiased">
     <slot />
 
     <script>
-      // Scroll-reveal observer
       const io = new IntersectionObserver(
         (entries) => {
           for (const entry of entries) {

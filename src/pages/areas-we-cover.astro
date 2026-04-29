@@ -1,0 +1,205 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+const site = Astro.site ?? new URL('https://prolinechch.co.nz');
+const canonical = new URL('/areas-we-cover', site).toString();
+
+const christchurchSuburbs = [
+  'Christchurch CBD',
+  'Riccarton',
+  'Fendalton',
+  'Merivale',
+  'St Albans',
+  'Papanui',
+  'Bishopdale',
+  'Burnside',
+  'Avonhead',
+  'Ilam',
+  'Halswell',
+  'Hornby',
+  'Wigram',
+  'Hoon Hay',
+  'Spreydon',
+  'Addington',
+  'Sydenham',
+  'Beckenham',
+  'Cashmere',
+  'Heathcote',
+  'Mt Pleasant',
+  'Ferrymead',
+  'Sumner',
+  'Linwood',
+  'Phillipstown',
+  'Aranui',
+  'New Brighton',
+  'Shirley',
+  'Mairehau',
+  'Belfast',
+];
+
+const canterburyTowns = [
+  'Rolleston',
+  'Lincoln',
+  'Prebbleton',
+  'West Melton',
+  'Tai Tapu',
+  'Halkett',
+  'Darfield',
+  'Oxford',
+  'Kaiapoi',
+  'Woodend',
+  'Pegasus',
+  'Rangiora',
+  'Cust',
+  'Amberley',
+  'Leeston',
+  'Ashburton',
+  'Methven',
+  'Akaroa',
+  'Banks Peninsula',
+];
+
+const areaSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Areas we cover',
+  url: canonical,
+  description:
+    'ProLine Aluminium services Christchurch and the wider Canterbury region. Suburbs and towns covered for window repairs, glass replacement, retrofit double glazing, and joinery maintenance.',
+  about: {
+    '@type': 'LocalBusiness',
+    '@id': `${site.toString()}#business`,
+    name: 'ProLine Aluminium',
+    areaServed: [...christchurchSuburbs, ...canterburyTowns].map((name) => ({
+      '@type': 'Place',
+      name,
+    })),
+  },
+};
+
+const breadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: site.toString() },
+    { '@type': 'ListItem', position: 2, name: 'Areas we cover', item: canonical },
+  ],
+};
+---
+
+<Layout
+  title="Areas We Cover | Christchurch & Canterbury Aluminium Joinery | ProLine"
+  description="ProLine Aluminium services Christchurch and wider Canterbury including Rolleston, Lincoln, Rangiora, Kaiapoi, Halswell, Hornby, Riccarton and more. Window repairs, glass, retrofit double glazing."
+  canonical={canonical}
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(areaSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumb)} />
+  </Fragment>
+
+  <Nav />
+
+  <main>
+    <!-- Hero -->
+    <section class="relative overflow-hidden bg-brushed noise isolate">
+      <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-ink-950"></div>
+
+      <div class="mx-auto max-w-5xl px-5 pt-32 pb-16 sm:px-8 sm:pt-36 sm:pb-20">
+        <nav class="text-xs text-ink-500" aria-label="Breadcrumb">
+          <ol class="flex flex-wrap items-center gap-1.5">
+            <li><a href="/" class="hover:text-ink-200 transition-colors">Home</a></li>
+            <li aria-hidden="true">/</li>
+            <li class="text-ink-300" aria-current="page">Areas we cover</li>
+          </ol>
+        </nav>
+
+        <div class="mt-10">
+          <span class="eyebrow">Service area</span>
+        </div>
+        <h1 class="mt-5 font-display text-4xl font-semibold leading-[1.05] tracking-tight text-ink-50 sm:text-5xl md:text-6xl">
+          Aluminium joinery service across <span class="text-chrome">Christchurch and Canterbury</span>.
+        </h1>
+        <p class="mt-6 max-w-3xl text-lg leading-relaxed text-ink-300 sm:text-xl">
+          Based in Christchurch, covering the city and the wider Canterbury region. Window and door repairs, broken glass replacement, retrofit double glazing, hardware, locks, and joinery maintenance, anywhere on this list.
+        </p>
+        <div class="mt-10 flex flex-wrap items-center gap-3">
+          <a href="/contact" class="btn btn-primary">Get a free quote</a>
+          <a href="tel:+64278456163" class="btn btn-secondary">027 845 6163</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Christchurch suburbs -->
+    <section class="relative bg-ink-950">
+      <div class="mx-auto max-w-5xl px-5 py-20 sm:px-8 sm:py-24">
+        <div class="reveal max-w-2xl">
+          <span class="eyebrow">Christchurch</span>
+          <h2 class="mt-5 font-display text-3xl font-semibold leading-tight tracking-tight text-ink-50 sm:text-4xl">
+            City suburbs.
+          </h2>
+          <p class="mt-4 text-base leading-relaxed text-ink-300 sm:text-lg">
+            Same-week service across all Christchurch suburbs. Most quotes done within 48 hours.
+          </p>
+        </div>
+
+        <ul class="reveal mt-10 grid grid-cols-2 gap-x-4 gap-y-2 sm:grid-cols-3 lg:grid-cols-4" style="transition-delay:120ms">
+          {christchurchSuburbs.map((s) => (
+            <li class="flex items-center gap-2 text-sm text-ink-200 sm:text-base">
+              <span class="inline-block h-1 w-1 shrink-0 rounded-full bg-chrome-500"></span>
+              <span>{s}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- Wider Canterbury -->
+    <section class="relative border-t border-ink-900 bg-ink-900">
+      <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 top-0 h-48 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(200,204,211,0.05),transparent_75%)]"></div>
+      <div class="relative mx-auto max-w-5xl px-5 py-20 sm:px-8 sm:py-24">
+        <div class="reveal max-w-2xl">
+          <span class="eyebrow">Wider Canterbury</span>
+          <h2 class="mt-5 font-display text-3xl font-semibold leading-tight tracking-tight text-ink-50 sm:text-4xl">
+            Towns and outer areas.
+          </h2>
+          <p class="mt-4 text-base leading-relaxed text-ink-300 sm:text-lg">
+            Selwyn, Waimakariri, Banks Peninsula and beyond. Travel-day jobs are batched where possible to keep things efficient.
+          </p>
+        </div>
+
+        <ul class="reveal mt-10 grid grid-cols-2 gap-x-4 gap-y-2 sm:grid-cols-3 lg:grid-cols-4" style="transition-delay:120ms">
+          {canterburyTowns.map((t) => (
+            <li class="flex items-center gap-2 text-sm text-ink-200 sm:text-base">
+              <span class="inline-block h-1 w-1 shrink-0 rounded-full bg-chrome-500"></span>
+              <span>{t}</span>
+            </li>
+          ))}
+        </ul>
+
+        <p class="reveal mt-10 max-w-2xl text-sm text-ink-400 sm:text-base" style="transition-delay:200ms">
+          Don't see your area on the list? Give us a call. Most of inland Canterbury is doable on a planned route.
+        </p>
+      </div>
+    </section>
+
+    <!-- Bottom CTA -->
+    <section class="relative border-t border-ink-900 bg-brushed-soft">
+      <div class="mx-auto max-w-4xl px-5 py-20 text-center sm:px-8 sm:py-24">
+        <h2 class="font-display text-3xl font-semibold leading-tight tracking-tight text-ink-50 sm:text-4xl">
+          Ready when you are.
+        </h2>
+        <p class="mx-auto mt-4 max-w-xl text-base leading-relaxed text-ink-300 sm:text-lg">
+          Send a photo or call. We'll be straight with you about timing for your suburb.
+        </p>
+        <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <a href="/contact" class="btn btn-primary">Request a quote</a>
+          <a href="tel:+64278456163" class="btn btn-secondary">027 845 6163</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
