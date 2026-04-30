@@ -4,6 +4,7 @@ import bikingSelfie from '../assets/family/biking-selfie.jpg';
 import connectFour from '../assets/family/connect-four.jpg';
 import picnicTable from '../assets/family/picnic-table.jpg';
 import familyPortrait from '../assets/family/family-portrait.jpg';
+import mabel from '../assets/family/mabel.jpg';
 ---
 
 <section id="about" class="relative scroll-mt-24 border-t border-ink-900 bg-ink-950">
@@ -53,9 +54,9 @@ import familyPortrait from '../assets/family/family-portrait.jpg';
           <figure class="family-photo family-photo--anchor">
             <Image
               src={bikingSelfie}
-              alt="Michael riding bikes with his daughter"
+              alt="Michael on the bike trails with his daughter, both wearing helmets"
               widths={[400, 720, 1100]}
-              sizes="(min-width: 1024px) 40vw, (min-width: 640px) 50vw, 100vw"
+              sizes="(min-width: 1024px) 35vw, (min-width: 640px) 50vw, 100vw"
               class="h-full w-full object-cover"
               loading="lazy"
             />
@@ -64,8 +65,8 @@ import familyPortrait from '../assets/family/family-portrait.jpg';
             <Image
               src={connectFour}
               alt="Michael playing giant Connect 4 with his daughter"
-              widths={[300, 500, 700]}
-              sizes="(min-width: 1024px) 20vw, (min-width: 640px) 25vw, 50vw"
+              widths={[260, 420, 600]}
+              sizes="(min-width: 1024px) 18vw, (min-width: 640px) 25vw, 50vw"
               class="h-full w-full object-cover"
               loading="lazy"
             />
@@ -73,9 +74,19 @@ import familyPortrait from '../assets/family/family-portrait.jpg';
           <figure class="family-photo">
             <Image
               src={picnicTable}
-              alt="Michael with his daughter at a playground picnic table"
-              widths={[300, 500, 700]}
-              sizes="(min-width: 1024px) 20vw, (min-width: 640px) 25vw, 50vw"
+              alt="Michael with his daughter at a Canterbury playground picnic table"
+              widths={[260, 420, 600]}
+              sizes="(min-width: 1024px) 18vw, (min-width: 640px) 25vw, 50vw"
+              class="h-full w-full object-cover"
+              loading="lazy"
+            />
+          </figure>
+          <figure class="family-photo family-photo--mabel">
+            <Image
+              src={mabel}
+              alt="Mabel on a balance bike with the family dog in the backyard"
+              widths={[300, 500, 720]}
+              sizes="(min-width: 1024px) 18vw, (min-width: 640px) 25vw, 50vw"
               class="h-full w-full object-cover"
               loading="lazy"
             />
@@ -83,9 +94,9 @@ import familyPortrait from '../assets/family/family-portrait.jpg';
           <figure class="family-photo family-photo--wide">
             <Image
               src={familyPortrait}
-              alt="Michael with his partner and daughter"
+              alt="Michael with his partner and daughter, the family behind ProLine Aluminium"
               widths={[400, 720, 1100]}
-              sizes="(min-width: 1024px) 40vw, (min-width: 640px) 50vw, 100vw"
+              sizes="(min-width: 1024px) 55vw, (min-width: 640px) 100vw, 100vw"
               class="h-full w-full object-cover"
               loading="lazy"
             />
@@ -99,10 +110,10 @@ import familyPortrait from '../assets/family/family-portrait.jpg';
 <style>
   .family-mosaic {
     display: grid;
-    grid-template-columns: 1.6fr 1fr;
+    grid-template-columns: 1.4fr 1fr 1fr;
     grid-template-rows: 1fr 1fr auto;
     gap: 0.75rem;
-    aspect-ratio: 5 / 6;
+    aspect-ratio: 1 / 1;
   }
 
   .family-photo {
@@ -142,9 +153,19 @@ import familyPortrait from '../assets/family/family-portrait.jpg';
     object-position: 50% 82%;
   }
 
-  /* Wide bottom photo spans both columns */
+  /* Mabel (tall right) */
+  .family-photo--mabel {
+    grid-column: 3;
+    grid-row: 1 / 3;
+  }
+  /* Keep Mabel's face just left of the cell centre so the dog stays in frame */
+  .family-photo--mabel img {
+    object-position: 40% 50%;
+  }
+
+  /* Wide bottom photo spans all three columns */
   .family-photo--wide {
-    grid-column: 1 / 3;
+    grid-column: 1 / -1;
     grid-row: 3;
     aspect-ratio: 16 / 9;
   }
@@ -170,6 +191,7 @@ import familyPortrait from '../assets/family/family-portrait.jpg';
       gap: 0.625rem;
     }
     .family-photo--anchor,
+    .family-photo--mabel,
     .family-photo--wide,
     .family-photo {
       grid-column: 1;
