@@ -23,30 +23,36 @@ const services = [
   <div class="grid gap-4 sm:grid-cols-2">
     <div class="sm:col-span-1">
       <label for="name" class="block text-xs font-semibold uppercase tracking-[0.12em] text-ink-400">Name</label>
-      <input id="name" name="name" type="text" required class="input mt-2" placeholder="Your name" />
+      <input id="name" name="name" type="text" maxlength="120" autocomplete="name" class="input mt-2" placeholder="Your name" aria-describedby="err-name" />
+      <p id="err-name" class="field-error" hidden></p>
     </div>
 
     <div class="sm:col-span-1">
       <label for="phone" class="block text-xs font-semibold uppercase tracking-[0.12em] text-ink-400">Phone</label>
-      <input id="phone" name="phone" type="tel" inputmode="tel" class="input mt-2" placeholder="027…" />
+      <input id="phone" name="phone" type="tel" inputmode="tel" maxlength="40" autocomplete="tel" class="input mt-2" placeholder="027…" aria-describedby="err-phone" />
+      <p id="err-phone" class="field-error" hidden></p>
     </div>
 
     <div class="sm:col-span-2">
       <label for="email" class="block text-xs font-semibold uppercase tracking-[0.12em] text-ink-400">Email</label>
-      <input id="email" name="email" type="email" required autocomplete="email" class="input mt-2" placeholder="you@email.co.nz" />
+      <input id="email" name="email" type="email" inputmode="email" maxlength="160" autocomplete="email" class="input mt-2" placeholder="you@email.co.nz" aria-describedby="err-email contact-hint" />
+      <p id="err-email" class="field-error" hidden></p>
+      <p id="contact-hint" class="mt-2 text-xs text-ink-500">Leave a phone number or email, whichever's easier. We just need one way to get back to you.</p>
     </div>
 
     <div class="sm:col-span-2">
       <label for="service" class="block text-xs font-semibold uppercase tracking-[0.12em] text-ink-400">What can we help with?</label>
-      <select id="service" name="service" class="input mt-2" required>
+      <select id="service" name="service" class="input mt-2" aria-describedby="err-service">
         <option value="">Select a service</option>
         {services.map((s) => <option value={s}>{s}</option>)}
       </select>
+      <p id="err-service" class="field-error" hidden></p>
     </div>
 
     <div class="sm:col-span-2">
       <label for="message" class="block text-xs font-semibold uppercase tracking-[0.12em] text-ink-400">Details</label>
-      <textarea id="message" name="message" required rows="5" class="input mt-2" placeholder="Rough description of the job. Address, rough timing, anything helpful."></textarea>
+      <textarea id="message" name="message" rows="5" maxlength="5000" class="input mt-2" placeholder="Rough description of the job. Address, rough timing, anything helpful." aria-describedby="err-message"></textarea>
+      <p id="err-message" class="field-error" hidden></p>
     </div>
   </div>
 
@@ -56,13 +62,16 @@ const services = [
     </p>
     <button type="submit" id="submit-btn" class="btn btn-primary">
       <span class="btn-label">Send enquiry</span>
-      <svg class="btn-spinner h-4 w-4 hidden animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <svg class="btn-spinner h-4 w-4 hidden animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
         <path d="M21 12a9 9 0 11-6.22-8.56" />
       </svg>
     </button>
   </div>
 
-  <div id="form-status" class="mt-5 hidden rounded-lg border px-4 py-3 text-sm" role="status" aria-live="polite"></div>
+  <!-- Status region. Kept permanently in the DOM (never display:none) so the
+       polite live region reliably announces success and error messages. It is
+       empty and zero-height until setStatus gives it content and styling. -->
+  <div id="form-status" class="form-status" role="status" aria-live="polite"></div>
 </form>
 
 <script>
@@ -70,30 +79,157 @@ const services = [
   const btn = document.getElementById('submit-btn') as HTMLButtonElement | null;
   const status = document.getElementById('form-status') as HTMLDivElement | null;
 
+  type FieldId = 'name' | 'phone' | 'email' | 'service' | 'message';
+  const FIELDS: FieldId[] = ['name', 'phone', 'email', 'service', 'message'];
+
+  function fieldEl(id: FieldId) {
+    return document.getElementById(id) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null;
+  }
+  function errEl(id: FieldId) {
+    return document.getElementById(`err-${id}`) as HTMLParagraphElement | null;
+  }
+
+  // Only ever flags a field as invalid when there is a message to explain why,
+  // so screen readers never hit an aria-invalid field with no description.
+  function setFieldError(id: FieldId, message: string) {
+    if (!message) {
+      clearFieldError(id);
+      return;
+    }
+    const el = fieldEl(id);
+    const err = errEl(id);
+    if (el) el.setAttribute('aria-invalid', 'true');
+    if (err) {
+      err.textContent = message;
+      err.hidden = false;
+    }
+  }
+
+  function clearFieldError(id: FieldId) {
+    const el = fieldEl(id);
+    const err = errEl(id);
+    if (el) el.removeAttribute('aria-invalid');
+    if (err) {
+      err.hidden = true;
+      err.textContent = '';
+    }
+  }
+
+  function clearAllErrors() {
+    FIELDS.forEach(clearFieldError);
+  }
+
+  function val(id: FieldId): string {
+    return (fieldEl(id)?.value ?? '').trim();
+  }
+
+  function isEmail(v: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  }
+  function phoneDigits(v: string): number {
+    return (v.match(/\d/g) ?? []).length;
+  }
+
+  // Returns the list of problems in top-to-bottom order.
+  function validate(): { field: FieldId; message: string }[] {
+    const errs: { field: FieldId; message: string }[] = [];
+    const name = val('name');
+    const phone = val('phone');
+    const email = val('email');
+    const service = val('service');
+    const message = val('message');
+
+    if (!name) errs.push({ field: 'name', message: 'Please add your name.' });
+
+    if (!phone && !email) {
+      // The message and focus go on email, which also carries the contact hint.
+      errs.push({ field: 'email', message: 'Please add a phone number or email so Michael can reply.' });
+    } else {
+      if (email && !isEmail(email)) {
+        errs.push({ field: 'email', message: "That email doesn't look right. Mind checking it?" });
+      }
+      if (phone && phoneDigits(phone) < 6) {
+        errs.push({ field: 'phone', message: 'That phone number looks too short.' });
+      }
+    }
+
+    if (!service) errs.push({ field: 'service', message: 'Please pick what we can help with.' });
+    if (!message) errs.push({ field: 'message', message: 'Please add a few details about the job.' });
+
+    return errs;
+  }
+
   function setStatus(kind: 'ok' | 'err' | 'info', message: string) {
     if (!status) return;
-    status.classList.remove('hidden');
     status.textContent = message;
     status.className =
-      'mt-5 rounded-lg border px-4 py-3 text-sm ' +
+      'form-status mt-5 rounded-lg border px-4 py-3 text-sm ' +
       (kind === 'ok'
         ? 'border-emerald-500/30 bg-emerald-500/5 text-emerald-300'
         : kind === 'err'
           ? 'border-red-500/30 bg-red-500/5 text-red-300'
           : 'border-ink-700 bg-white/[0.02] text-ink-300');
   }
+  function hideStatus() {
+    if (!status) return;
+    status.textContent = '';
+    status.className = 'form-status';
+  }
 
   function setBusy(busy: boolean) {
     if (!btn) return;
     btn.disabled = busy;
+    btn.setAttribute('aria-busy', busy ? 'true' : 'false');
+    // Keep an accessible name while the visible label is swapped for the spinner.
+    if (busy) btn.setAttribute('aria-label', 'Sending');
+    else btn.removeAttribute('aria-label');
     btn.querySelector('.btn-label')?.classList.toggle('hidden', busy);
     btn.querySelector('.btn-spinner')?.classList.toggle('hidden', !busy);
   }
 
+  // Map a server-reported field onto our inputs. 'contact' means the
+  // phone-or-email rule failed; the message and focus live on email.
+  function applyServerField(field: string, message: string) {
+    if (field === 'contact') {
+      setFieldError('email', message);
+      fieldEl('email')?.focus();
+      return;
+    }
+    if ((FIELDS as string[]).includes(field)) {
+      setFieldError(field as FieldId, message);
+      fieldEl(field as FieldId)?.focus();
+    }
+  }
+
+  // Clear a field's error as soon as the user starts fixing it. Editing phone
+  // or email clears both, since they share the "at least one" rule.
+  FIELDS.forEach((id) => {
+    const el = fieldEl(id);
+    if (!el) return;
+    const handler = () => {
+      clearFieldError(id);
+      if (id === 'phone' || id === 'email') {
+        clearFieldError('phone');
+        clearFieldError('email');
+      }
+    };
+    el.addEventListener('input', handler);
+    el.addEventListener('change', handler);
+  });
+
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!form) return;
-    if (!form.reportValidity()) return;
+
+    clearAllErrors();
+    const problems = validate();
+    if (problems.length > 0) {
+      problems.forEach((p) => setFieldError(p.field, p.message));
+      // Announce first, then move focus, so the polite summary is not preempted.
+      setStatus('err', 'Please check the highlighted fields above.');
+      fieldEl(problems[0].field)?.focus();
+      return;
+    }
 
     setBusy(true);
     setStatus('info', 'Sending…');
@@ -102,16 +238,30 @@ const services = [
 
     try {
       const res = await fetch('/api/contact', { method: 'POST', body: data });
-      const json = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+      const json = (await res.json().catch(() => null)) as
+        | { ok?: boolean; error?: string; field?: string }
+        | null;
 
-      if (res.ok && json.ok) {
-        setStatus('ok', "Thanks. Michael will be in touch shortly.");
+      if (res.ok && json?.ok) {
+        clearAllErrors();
+        setStatus('ok', 'Thanks. Michael will be in touch shortly.');
         form.reset();
+        return;
+      }
+
+      if (json?.field && json.error) {
+        // Specific text goes under the field; banner stays generic so the same
+        // sentence is not shown twice.
+        setStatus('err', 'Please check the highlighted field and try again.');
+        applyServerField(json.field, json.error);
+      } else if (json?.error) {
+        setStatus('err', json.error);
       } else {
-        setStatus('err', json.error || 'Something went wrong. Please try calling 027 845 6163.');
+        // No readable JSON body. Almost always a transient server/edge error.
+        setStatus('err', "Couldn't send that just now. Please try again, or call 027 845 6163.");
       }
     } catch {
-      setStatus('err', 'Network error. Please try calling 027 845 6163.');
+      setStatus('err', "Couldn't reach the server. Please check your connection, or call 027 845 6163.");
     } finally {
       setBusy(false);
     }

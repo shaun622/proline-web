@@ -47,7 +47,7 @@ faqs:
   - q: My handle is broken. Can you match the original?
     a: Often yes, especially on common NZ brands. Where the original is discontinued, we fit a current equivalent that matches the cutout, finish, and operation. You usually can't tell the difference.
   - q: How much does a typical hardware replacement cost?
-    a: For a single handle or roller, it's usually inexpensive — most replacements are tens of dollars rather than hundreds, supplied and fitted. Multiple items in the same visit drop the per-item cost.
+    a: For a single handle or roller, it's usually inexpensive. Most replacements are tens of dollars rather than hundreds, supplied and fitted. Multiple items in the same visit drop the per-item cost.
   - q: Can you do all of a house's hardware in one visit?
     a: Yes, and that's usually the most cost-effective way. One trip, one quote, all sorted.
   - q: Do you guarantee the parts?

@@ -48,7 +48,7 @@ pricing: Quoted per property after walk-through. Typical 3-bedroom home is a hal
 
 faqs:
   - q: Is this worth it if my windows are working OK?
-    a: Yes. Most aluminium joinery failures happen gradually — a seal goes a bit soft, a roller wears, a catch loosens. A maintenance visit catches small issues before they become expensive repairs or full replacements.
+    a: Yes. Most aluminium joinery failures happen gradually. A seal goes a bit soft, a roller wears, a catch loosens. A maintenance visit catches small issues before they become expensive repairs or full replacements.
   - q: How often should aluminium joinery be serviced?
     a: Every 3 to 5 years on residential. Annually on commercial properties or coastal homes where salt exposure accelerates wear. Most people find a service every few years pays for itself.
   - q: How long does a maintenance visit take?
