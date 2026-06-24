@@ -2,8 +2,10 @@
 // Receives the contact form submission, validates, then sends via Resend.
 // Env bindings (set in Cloudflare Pages dashboard):
 //   - RESEND_API_KEY       (secret)   Resend API key
-//   - CONTACT_FROM_EMAIL   (optional) Verified sender, e.g. "ProLine <website@prolinechch.co.nz>".
-//                                     Defaults to Resend's onboarding sender until domain is verified.
+//   - CONTACT_FROM_EMAIL   (optional) Sender override. Defaults to the branded
+//                                     michael@prolinechch.co.nz. Requires the
+//                                     prolinechch.co.nz domain to be verified on
+//                                     the SAME Resend account as RESEND_API_KEY.
 //   - CONTACT_TO_EMAIL     (optional) Recipient. Defaults to michael@prolinechch.co.nz.
 
 interface Env {
@@ -106,7 +108,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
 
   // Sanitise operator-set env values too, so a misconfigured address with a
   // stray newline can't break the email send.
-  const from = cleanLine(env.CONTACT_FROM_EMAIL, 200) || 'ProLine Website <onboarding@resend.dev>';
+  const from = cleanLine(env.CONTACT_FROM_EMAIL, 200) || 'ProLine Website <michael@prolinechch.co.nz>';
   const to = cleanLine(env.CONTACT_TO_EMAIL, 200) || 'michael@prolinechch.co.nz';
 
   const textBody = [
