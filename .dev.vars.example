@@ -6,3 +6,12 @@
 RESEND_API_KEY=your_resend_api_key_here
 # CONTACT_FROM_EMAIL="ProLine <website@prolinechch.co.nz>"
 # CONTACT_TO_EMAIL=michael@prolinechch.co.nz
+
+# Cloudflare Turnstile (bot protection on the contact form).
+# When TURNSTILE_SECRET_KEY is unset the bot check is skipped, so the form
+# works without it. Set both to enable. The site key is public and belongs in
+# the build environment (Astro reads PUBLIC_TURNSTILE_SITE_KEY at build time),
+# not in this file; it lives here only for local `wrangler pages dev` parity.
+# Cloudflare's official test keys (always pass): site 1x00000000000000000000AA,
+# secret 1x0000000000000000000000000000000AA.
+# TURNSTILE_SECRET_KEY=your_turnstile_secret_key_here

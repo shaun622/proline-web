@@ -81,13 +81,30 @@ Cloudflare will give you a URL like `proline-aluminium.pages.dev`. Use that as t
 
 In **Pages → Settings → Environment variables → Production**, set:
 
-| Variable              | Required | Purpose                                                                                 |
-| --------------------- | -------- | --------------------------------------------------------------------------------------- |
-| `RESEND_API_KEY`      | Yes      | Resend API key (secret). Generate at https://resend.com/api-keys.                       |
-| `CONTACT_FROM_EMAIL`  | No       | Sender. Format `"ProLine <website@prolinechch.co.nz>"`. Requires domain verification in Resend. Defaults to `onboarding@resend.dev` which works immediately but shows as resend.dev. |
-| `CONTACT_TO_EMAIL`    | No       | Recipient. Defaults to `michael@prolinechch.co.nz`.                                     |
+| Variable                    | Required | Purpose                                                                                 |
+| --------------------------- | -------- | --------------------------------------------------------------------------------------- |
+| `RESEND_API_KEY`            | Yes      | Resend API key (secret). Must be from the Resend account where `prolinechch.co.nz` is verified. Generate at https://resend.com/api-keys. |
+| `CONTACT_FROM_EMAIL`        | No       | Sender override. Defaults to `"ProLine Website <michael@prolinechch.co.nz>"`.            |
+| `CONTACT_TO_EMAIL`          | No       | Recipient. Defaults to `michael@prolinechch.co.nz`.                                     |
+| `TURNSTILE_SECRET_KEY`      | No       | Cloudflare Turnstile secret (secret). When set, every submission must pass Turnstile. When unset, the bot check is skipped. |
+| `PUBLIC_TURNSTILE_SITE_KEY` | No       | Turnstile site key (public, build-time). Renders the widget. Must pair with `TURNSTILE_SECRET_KEY` from the same widget. |
 
-Tick **"Encrypt"** for `RESEND_API_KEY`. Redeploy after adding.
+Tick **"Encrypt"** for `RESEND_API_KEY` and `TURNSTILE_SECRET_KEY`. Redeploy after adding.
+
+### 3a. Enable Turnstile (bot protection)
+
+The contact form supports Cloudflare Turnstile. It is off until you add the keys, so it can ship first and be switched on later.
+
+1. **Cloudflare dashboard → Turnstile → Add widget.**
+   - Name: ProLine Website. Mode: **Managed**.
+   - Hostnames: `prolinechch.co.nz` (add `www.prolinechch.co.nz` and `localhost` too if you test locally).
+2. Copy the **Site Key** and **Secret Key**.
+3. In **Pages → Settings → Environment variables → Production**, add:
+   - `PUBLIC_TURNSTILE_SITE_KEY` = the site key (plaintext).
+   - `TURNSTILE_SECRET_KEY` = the secret key (encrypted).
+4. **Redeploy.** The widget then renders on the form and the server enforces it. Verify with a real submission.
+
+Local testing uses `wrangler pages dev` with `TURNSTILE_SECRET_KEY` in `.dev.vars` and `PUBLIC_TURNSTILE_SITE_KEY` in the build env. Cloudflare's always-pass test keys are site `1x00000000000000000000AA` / secret `1x0000000000000000000000000000000AA`.
 
 ### 4. Custom domain
 

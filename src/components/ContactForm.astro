@@ -8,6 +8,11 @@ const services = [
   'General Joinery Maintenance',
   'Not sure, need advice',
 ];
+
+// Public Turnstile site key, injected at build time. When absent, the widget
+// and its script are not rendered and the form works exactly as before, so the
+// integration can ship ahead of the keys being set in Cloudflare.
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
 ---
 
 <form
@@ -56,6 +61,20 @@ const services = [
     </div>
   </div>
 
+  {turnstileSiteKey && (
+    <div class="mt-5">
+      <div
+        id="turnstile-widget"
+        class="cf-turnstile"
+        data-sitekey={turnstileSiteKey}
+        data-theme="dark"
+        data-size="flexible"
+        data-action="contact"
+      ></div>
+      <p id="err-turnstile" class="field-error" hidden></p>
+    </div>
+  )}
+
   <div class="mt-6 flex flex-wrap items-center justify-between gap-4">
     <p class="text-xs text-ink-500">
       Typical response within 48 hours. No obligation.
@@ -74,10 +93,42 @@ const services = [
   <div id="form-status" class="form-status" role="status" aria-live="polite"></div>
 </form>
 
+{turnstileSiteKey && (
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer is:inline></script>
+)}
+
 <script>
   const form = document.getElementById('contact-form') as HTMLFormElement | null;
   const btn = document.getElementById('submit-btn') as HTMLButtonElement | null;
   const status = document.getElementById('form-status') as HTMLDivElement | null;
+
+  // Present only when the Turnstile widget rendered (site key configured).
+  const hasTurnstile = !!document.querySelector('.cf-turnstile');
+  const turnstileErr = document.getElementById('err-turnstile') as HTMLParagraphElement | null;
+
+  function turnstileToken(): string {
+    const el = form?.querySelector('input[name="cf-turnstile-response"]') as HTMLInputElement | null;
+    return el?.value?.trim() ?? '';
+  }
+  function resetTurnstile() {
+    // Tokens are single-use, so refresh after every completed attempt.
+    const t = (window as unknown as { turnstile?: { reset: () => void } }).turnstile;
+    try {
+      t?.reset();
+    } catch {
+      /* widget not ready yet, nothing to reset */
+    }
+  }
+  function setTurnstileError(message: string) {
+    if (!turnstileErr) return;
+    if (message) {
+      turnstileErr.textContent = message;
+      turnstileErr.hidden = false;
+    } else {
+      turnstileErr.hidden = true;
+      turnstileErr.textContent = '';
+    }
+  }
 
   type FieldId = 'name' | 'phone' | 'email' | 'service' | 'message';
   const FIELDS: FieldId[] = ['name', 'phone', 'email', 'service', 'message'];
@@ -222,12 +273,22 @@ const services = [
     if (!form) return;
 
     clearAllErrors();
+    setTurnstileError('');
     const problems = validate();
     if (problems.length > 0) {
       problems.forEach((p) => setFieldError(p.field, p.message));
       // Announce first, then move focus, so the polite summary is not preempted.
       setStatus('err', 'Please check the highlighted fields above.');
       fieldEl(problems[0].field)?.focus();
+      return;
+    }
+
+    // Make sure the bot check has produced a token before we send.
+    if (hasTurnstile && !turnstileToken()) {
+      const msg = 'Please complete the verification below, then send.';
+      setTurnstileError(msg);
+      setStatus('err', msg);
+      document.getElementById('turnstile-widget')?.scrollIntoView({ block: 'center', behavior: 'smooth' });
       return;
     }
 
@@ -244,12 +305,18 @@ const services = [
 
       if (res.ok && json?.ok) {
         clearAllErrors();
+        setTurnstileError('');
         setStatus('ok', 'Thanks. Michael will be in touch shortly.');
         form.reset();
+        resetTurnstile();
         return;
       }
 
-      if (json?.field && json.error) {
+      if (json?.field === 'turnstile') {
+        const msg = json.error || 'Please complete the verification and try again.';
+        setTurnstileError(msg);
+        setStatus('err', msg);
+      } else if (json?.field && json.error) {
         // Specific text goes under the field; banner stays generic so the same
         // sentence is not shown twice.
         setStatus('err', 'Please check the highlighted field and try again.');
@@ -260,8 +327,11 @@ const services = [
         // No readable JSON body. Almost always a transient server/edge error.
         setStatus('err', "Couldn't send that just now. Please try again, or call 027 845 6163.");
       }
+      // The token was consumed by that attempt; get a fresh one for the retry.
+      resetTurnstile();
     } catch {
       setStatus('err', "Couldn't reach the server. Please check your connection, or call 027 845 6163.");
+      resetTurnstile();
     } finally {
       setBusy(false);
     }

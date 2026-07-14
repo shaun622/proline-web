@@ -1,17 +1,24 @@
 // Cloudflare Pages Function. POST /api/contact
 // Receives the contact form submission, validates, then sends via Resend.
 // Env bindings (set in Cloudflare Pages dashboard):
-//   - RESEND_API_KEY       (secret)   Resend API key
-//   - CONTACT_FROM_EMAIL   (optional) Sender override. Defaults to the branded
-//                                     michael@prolinechch.co.nz. Requires the
-//                                     prolinechch.co.nz domain to be verified on
-//                                     the SAME Resend account as RESEND_API_KEY.
-//   - CONTACT_TO_EMAIL     (optional) Recipient. Defaults to michael@prolinechch.co.nz.
+//   - RESEND_API_KEY        (secret)   Resend API key
+//   - CONTACT_FROM_EMAIL    (optional) Sender override. Defaults to the branded
+//                                      michael@prolinechch.co.nz. Requires the
+//                                      prolinechch.co.nz domain to be verified on
+//                                      the SAME Resend account as RESEND_API_KEY.
+//   - CONTACT_TO_EMAIL      (optional) Recipient. Defaults to michael@prolinechch.co.nz.
+//   - TURNSTILE_SECRET_KEY  (secret)   Cloudflare Turnstile secret. When set, every
+//                                      submission must carry a valid Turnstile token.
+//                                      When unset, the bot check is skipped so the
+//                                      form keeps working before Turnstile is wired up.
+//                                      The matching PUBLIC_TURNSTILE_SITE_KEY drives the
+//                                      client widget (build-time var).
 
 interface Env {
   RESEND_API_KEY: string;
   CONTACT_FROM_EMAIL?: string;
   CONTACT_TO_EMAIL?: string;
+  TURNSTILE_SECRET_KEY?: string;
 }
 
 type PagesFunction<E = unknown> = (ctx: {
@@ -62,6 +69,26 @@ function phoneDigits(v: string): number {
   return (v.match(/\d/g) ?? []).length;
 }
 
+// Verify a Cloudflare Turnstile token against the siteverify API. Fails closed:
+// any missing token, network error, or non-success response returns false.
+async function verifyTurnstile(secret: string, token: string, ip: string | null): Promise<boolean> {
+  if (!token) return false;
+  const body = new FormData();
+  body.append('secret', secret);
+  body.append('response', token);
+  if (ip) body.append('remoteip', ip);
+  try {
+    const r = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      body,
+    });
+    const data = (await r.json().catch(() => null)) as { success?: boolean } | null;
+    return data?.success === true;
+  } catch {
+    return false;
+  }
+}
+
 export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   if (!env.RESEND_API_KEY) {
     return json({ ok: false, error: "Couldn't send that just now. Please try again, or call 027 845 6163." }, 500);
@@ -104,6 +131,18 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   }
   if (!message) {
     return json({ ok: false, field: 'message', error: 'Please add a few details about the job.' }, 400);
+  }
+
+  // Bot protection. Only enforced once TURNSTILE_SECRET_KEY is configured, so the
+  // form keeps working before Turnstile is set up. Checked after field validation
+  // so a user fixing a field does not burn their single-use token.
+  if (env.TURNSTILE_SECRET_KEY) {
+    const token = String(form.get('cf-turnstile-response') ?? '').trim();
+    const ip = request.headers.get('CF-Connecting-IP');
+    const passed = await verifyTurnstile(env.TURNSTILE_SECRET_KEY, token, ip);
+    if (!passed) {
+      return json({ ok: false, field: 'turnstile', error: 'Please complete the verification and try again.' }, 400);
+    }
   }
 
   // Sanitise operator-set env values too, so a misconfigured address with a
